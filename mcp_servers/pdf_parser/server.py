@@ -1,11 +1,26 @@
 from mcp.server.fastmcp import FastMCP
 
-from .tools import (
-    parse_pdf,
-    get_pdf_metadata,
-    extract_page,
-    extract_document_text
-)
+try:
+    from .tools import (
+        parse_pdf,
+        get_pdf_metadata,
+        extract_page,
+        extract_document_text
+    )
+except ImportError:
+    from pathlib import Path
+    import sys
+
+    ROOT_DIR = Path(__file__).resolve().parents[2]
+    if str(ROOT_DIR) not in sys.path:
+        sys.path.insert(0, str(ROOT_DIR))
+
+    from mcp_servers.pdf_parser.tools import (
+        parse_pdf,
+        get_pdf_metadata,
+        extract_page,
+        extract_document_text
+    )
 
 mcp = FastMCP("PDF Parser MCP")
 

@@ -1,27 +1,53 @@
-from .retrieval_engine import (
+from mcp_servers.retrieval.retrieval_engine import (
     RetrievalEngine
 )
 
-from .schemas import (
-    RetrievalResponse,
-    RetrievalResult
+from mcp_servers.retrieval.schemas import (
+    RetrievalRequest
 )
 
-_engine = RetrievalEngine()
+_engine = None
 
 
-def search(
+def get_engine():
+
+    global _engine
+
+    if _engine is None:
+        _engine = RetrievalEngine()
+
+    return _engine
+
+
+def semantic_search_tool(
     query: str,
     top_k: int = 5
 ):
-    results = _engine.search(
+
+    engine = get_engine()
+
+    request = RetrievalRequest(
         query=query,
         top_k=top_k
     )
 
-    return RetrievalResponse(
-        results=[
-            RetrievalResult(**item)
-            for item in results
-        ]
-    ).model_dump()
+    response = engine.semantic_search(
+        request
+    )
+
+    return response.model_dump()
+
+
+def get_collection_stats_tool():
+    engine = get_engine()
+
+    return engine.get_collection_stats()
+
+
+def list_documents_tool():
+    engine = get_engine()
+
+    return {
+        "documents":
+        engine.list_documents()
+    }
