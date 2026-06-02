@@ -1,8 +1,6 @@
 from uuid import uuid4
 
-from qdrant_client.models import (
-    PointStruct
-)
+from qdrant_client.models import PointStruct
 
 from vector_store.qdrant_client import (
     QdrantConnection
@@ -29,40 +27,52 @@ class QdrantIngestor:
     def ingest_chunks(
         self,
         collection_name: str,
-        chunks: list[str],
-        document_name: str
+        chunk_records: list
     ):
 
         points = []
 
+        texts = [
+            record["chunk_text"]
+            for record in chunk_records
+        ]
+
         vectors = (
             self.embedder.embed_batch(
-                chunks
+                texts
             )
         )
 
-        for chunk, vector in zip(
-            chunks,
+        for record, vector in zip(
+            chunk_records,
             vectors
         ):
 
             point = PointStruct(
+
                 id=str(uuid4()),
 
                 vector=vector,
 
                 payload={
-                    "document_name":
-                    document_name,
 
-                    "chunk_text":
-                    chunk,
+                    "document_name":
+                    record["document_name"],
+
+                    "page":
+                    record["page"],
+
+                    "chunk_id":
+                    record["chunk_id"],
 
                     "chunk_type":
-                    "base",
+                    record["chunk_type"],
 
                     "content_type":
-                    "text"
+                    record["content_type"],
+
+                    "chunk_text":
+                    record["chunk_text"]
                 }
             )
 
