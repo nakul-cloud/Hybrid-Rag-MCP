@@ -191,6 +191,38 @@ Troubleshooting:
 
 ---
 
+## test_retrieval.py
+
+Purpose:
+
+Run a semantic search query using the retrieval engine and print top results.
+
+Command:
+
+```bash
+uv run python tests/test_retrieval.py
+```
+
+Expected Output:
+
+```text
+Document: <name>
+Page: <number>
+Score: <float>
+<chunk excerpt>
+```
+
+Prerequisites:
+
+* Qdrant is running.
+* `documents` collection exists and has points.
+
+Troubleshooting:
+
+* If results are empty, run the ingestion pipeline first.
+
+---
+
 ## test_pipeline.py
 
 Purpose:
