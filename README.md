@@ -12,6 +12,20 @@ The system intelligently analyzes uploaded documents, routes them through specia
 
 ---
 
+# Project Status
+
+Phase 1  PDF Parser MCP        DONE
+Phase 2  Chunking              DONE
+Phase 3  Embeddings            DONE
+Phase 4  Qdrant                DONE
+Phase 5  Ingestion Pipeline    DONE
+Phase 6  Retrieval MCP         DONE
+Phase 7  Groq RAG              NEXT
+Phase 8  OCR MCP               NEXT
+Phase 9  Table MCP             NEXT
+
+---
+
 # Problem Statement
 
 Most document chat systems follow a simple pipeline:
@@ -135,41 +149,30 @@ Allow users to ask natural language questions over ingested documents while main
 # System Architecture
 
 ```text
-Document Upload
-        │
-        ▼
-Document Analysis MCP
-        │
- ┌──────┼────────────────────┐
- │      │                    │
- ▼      ▼                    ▼
-PDF     OCR              Table Extraction
-Parser  MCP                  MCP
-MCP
- │
- ▼
-Layout Analysis MCP
- │
- ▼
-Content Normalization
- │
- ▼
-Chunking Pipeline
- │
- ▼
-Embedding Generation
- │
- ▼
-Qdrant Vector Database
- │
- ▼
+User Query
+        |
+        v
 Retrieval MCP
- │
- ▼
-LLM
- │
- ▼
-Response Generation
+        |
+        v
+Retrieval Engine
+        |
+        v
+Qdrant
+
+PDF
+        |
+        v
+PDF Parser MCP
+        |
+        v
+Chunking
+        |
+        v
+Embedding
+        |
+        v
+Qdrant
 ```
 
 ---
