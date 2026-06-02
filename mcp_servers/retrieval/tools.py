@@ -5,6 +5,11 @@ from mcp_servers.retrieval.retrieval_engine import (
 from mcp_servers.retrieval.schemas import (
     RetrievalRequest
 )
+from mcp_servers.retrieval.rag_engine import (
+    RAGEngine
+)
+
+_rag_engine = None
 
 _engine = None
 
@@ -51,3 +56,29 @@ def list_documents_tool():
         "documents":
         engine.list_documents()
     }
+
+def get_rag_engine():
+
+    global _rag_engine
+
+    if _rag_engine is None:
+
+        _rag_engine = (
+            RAGEngine()
+        )
+
+    return _rag_engine
+
+def ask_documents_tool(
+    query: str,
+    top_k: int = 5
+):
+
+    rag_engine = (
+        get_rag_engine()
+    )
+
+    return rag_engine.ask_documents(
+        query=query,
+        top_k=top_k
+    )

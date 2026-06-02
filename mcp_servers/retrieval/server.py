@@ -4,7 +4,8 @@ try:
     from .tools import (
         semantic_search_tool,
         get_collection_stats_tool,
-        list_documents_tool
+        list_documents_tool,
+        ask_documents_tool
     )
 except ImportError:
     from pathlib import Path
@@ -17,7 +18,8 @@ except ImportError:
     from mcp_servers.retrieval.tools import (
         semantic_search_tool,
         get_collection_stats_tool,
-        list_documents_tool
+        list_documents_tool,
+        ask_documents_tool
     )
 
 mcp = FastMCP("Retrieval MCP")
@@ -48,6 +50,21 @@ def list_documents():
     List document names currently stored in the collection.
     """
     return list_documents_tool()
+
+
+@mcp.tool()
+def ask_documents(
+    query: str,
+    top_k: int = 5
+):
+    """
+    Ask questions over ingested documents using Gemini RAG.
+    """
+
+    return ask_documents_tool(
+        query=query,
+        top_k=top_k
+    )
 
 
 if __name__ == "__main__":
