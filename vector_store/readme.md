@@ -1,6 +1,8 @@
-# Qdrant Vector Store (V1)
+# Qdrant Vector Store
 
-## Overview
+## V1 (Archived)
+
+### Overview
 
 The Vector Store layer is responsible for persisting embeddings generated during the ingestion process and enabling future semantic retrieval operations.
 
@@ -10,15 +12,19 @@ The vector store acts as the knowledge repository for the entire document intell
 
 Version:
 
+```text
 V1
+```
 
 Status:
 
+```text
 Completed
+```
 
 ---
 
-# Objectives
+### Objectives
 
 * Establish connection with Qdrant
 * Create and manage vector collections
@@ -28,37 +34,48 @@ Completed
 
 ---
 
-# Architecture
+### Architecture
 
+```text
 Chunk
-↓
+	|
+	v
 Embedding
-↓
+	|
+	v
 Qdrant Vector Store
-↓
+	|
+	v
 Collection
+```
 
 ---
 
-# Technology Stack
+### Technology Stack
 
 Vector Database:
 
+```text
 Qdrant
+```
 
 Deployment:
 
+```text
 Docker Desktop
+```
 
 Client:
 
+```text
 qdrant-client
+```
 
 ---
 
-# Components
+### Components
 
-## qdrant_client.py
+#### qdrant_client.py
 
 Responsibilities:
 
@@ -67,7 +84,7 @@ Responsibilities:
 
 ---
 
-## collections.py
+#### collections.py
 
 Responsibilities:
 
@@ -77,7 +94,7 @@ Responsibilities:
 
 ---
 
-## ingest.py
+#### ingest.py
 
 Responsibilities:
 
@@ -87,58 +104,50 @@ Responsibilities:
 
 ---
 
-# Collection Configuration
+### Collection Configuration
 
 Collection Name:
 
+```text
 documents
+```
 
 Vector Size:
 
+```text
 768
+```
 
 Distance Metric:
 
+```text
 COSINE
+```
 
 ---
 
-# Payload Structure (V1.5)
+### Payload Structure (V1)
 
+```json
 {
-"document_name": "sample.pdf",
-"page": 1,
-"chunk_id": "chunk_0001",
-"chunk_type": "base",
-"content_type": "text",
-"chunk_text": "..."
+	"document_name": "sample.pdf",
+	"chunk_text": "...",
+	"chunk_type": "base",
+	"content_type": "text"
 }
+```
 
 ---
 
-# Collection Summary
+### Verification
 
-Collection Name:
-documents
-
-Vector Dimension:
-768
-
-Distance Metric:
-COSINE
-
-Stored Points:
-40+
-
----
-
-# Verification
-
-## Qdrant Connection
+#### Qdrant Connection
 
 Status:
 
+```text
 PASSED
+```
 
 Result:
 
@@ -146,11 +155,13 @@ Successfully connected to local Qdrant instance.
 
 ---
 
-## Collection Creation
+#### Collection Creation
 
 Status:
 
+```text
 PASSED
+```
 
 Result:
 
@@ -158,11 +169,13 @@ documents collection created successfully.
 
 ---
 
-## Collection Discovery
+#### Collection Discovery
 
 Status:
 
+```text
 PASSED
+```
 
 Result:
 
@@ -170,11 +183,13 @@ Collection listed successfully.
 
 ---
 
-## Vector Ingestion
+#### Vector Ingestion
 
 Status:
 
+```text
 PASSED
+```
 
 Result:
 
@@ -182,44 +197,47 @@ Embeddings stored successfully.
 
 ---
 
-# Verification Scripts
+### Verification Scripts
 
+```text
 tests/test_qdrant_connection.py
-
 tests/test_create_collection.py
-
 tests/test_list_collections.py
-
 tests/test_ingest.py
+```
 
 ---
 
-# Future Payload Versions
+### Future Payload Versions
 
-## V2
+#### V2
 
+```json
 {
-"document_name": "...",
-"page": 1,
-"chunk_id": "...",
-"chunk_text": "..."
+	"document_name": "...",
+	"page": 1,
+	"chunk_id": "...",
+	"chunk_text": "..."
 }
+```
 
 ---
 
-## V3
+#### V3
 
+```json
 {
-"document_name": "...",
-"page": 1,
-"section": "...",
-"chunk_type": "...",
-"content_type": "..."
+	"document_name": "...",
+	"page": 1,
+	"section": "...",
+	"chunk_type": "...",
+	"content_type": "..."
 }
+```
 
 ---
 
-## V4
+#### V4
 
 Support:
 
@@ -229,7 +247,7 @@ Support:
 
 ---
 
-# Deliverables
+### Deliverables
 
 Completed:
 
@@ -238,6 +256,69 @@ Completed:
 * Vector ingestion
 * Metadata payload support
 * Verification testing
+
+---
+
+## V1.5 (Current)
+
+### Overview
+
+V1.5 standardizes payload metadata to include page, chunk identifiers, and content types for downstream MCP services.
+
+Version:
+
+```text
+V1.5
+```
+
+Status:
+
+```text
+Completed
+```
+
+---
+
+### Payload Structure (V1.5)
+
+```json
+{
+	"document_name": "sample.pdf",
+	"page": 1,
+	"chunk_id": "chunk_0001",
+	"chunk_type": "base",
+	"content_type": "text",
+	"chunk_text": "..."
+}
+```
+
+---
+
+### Collection Summary
+
+Collection Name:
+
+```text
+documents
+```
+
+Vector Dimension:
+
+```text
+768
+```
+
+Distance Metric:
+
+```text
+COSINE
+```
+
+Stored Points:
+
+```text
+40+
+```
 
 ---
 
