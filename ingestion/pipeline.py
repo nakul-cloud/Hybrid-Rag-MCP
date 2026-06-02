@@ -8,6 +8,10 @@ from ingestion.chunker import (
     HybridChunker
 )
 
+from ingestion.filters import (
+    ChunkFilter
+)
+
 from vector_store.ingest import (
     QdrantIngestor
 )
@@ -69,6 +73,11 @@ class IngestionPipeline:
             )
 
             for chunk in base_chunks:
+
+                if ChunkFilter.is_noise_chunk(
+                    chunk
+                ):
+                    continue
 
                 chunk_records.append(
 

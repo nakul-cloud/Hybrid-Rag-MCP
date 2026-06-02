@@ -39,18 +39,39 @@ class RetrievalEngine:
             )
         )
 
-        search_results = (
-            self.client.search(
-                collection_name=
-                self.collection_name,
+        if hasattr(self.client, "query_points"):
 
-                query_vector=
-                query_vector,
+            response = (
+                self.client.query_points(
+                    collection_name=
+                    self.collection_name,
 
-                limit=
-                request.top_k
+                    query=
+                    query_vector,
+
+                    limit=
+                    request.top_k,
+
+                    with_payload=True
+                )
             )
-        )
+
+            search_results = response.points
+
+        else:
+
+            search_results = (
+                self.client.search(
+                    collection_name=
+                    self.collection_name,
+
+                    query_vector=
+                    query_vector,
+
+                    limit=
+                    request.top_k
+                )
+            )
 
         results = []
 
