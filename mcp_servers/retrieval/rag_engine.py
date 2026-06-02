@@ -26,7 +26,7 @@ class RAGEngine:
     def ask_documents(
         self,
         query: str,
-        top_k: int = 5
+        top_k: int = 8
     ):
 
         request = RetrievalRequest(
@@ -64,7 +64,10 @@ Page: {result.page}
                     result.page,
 
                     "score":
-                    result.score
+                    result.score,
+
+                    "snippet":
+                    result.chunk_text[:300]
                 }
             )
 
