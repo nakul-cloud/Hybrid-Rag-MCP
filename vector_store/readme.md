@@ -103,14 +103,32 @@ COSINE
 
 ---
 
-# Payload Structure (V1)
+# Payload Structure (V1.5)
 
 {
 "document_name": "sample.pdf",
-"chunk_text": "...",
+"page": 1,
+"chunk_id": "chunk_0001",
 "chunk_type": "base",
-"content_type": "text"
+"content_type": "text",
+"chunk_text": "..."
 }
+
+---
+
+# Collection Summary
+
+Collection Name:
+documents
+
+Vector Dimension:
+768
+
+Distance Metric:
+COSINE
+
+Stored Points:
+40+
 
 ---
 
