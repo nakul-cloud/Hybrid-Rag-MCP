@@ -19,6 +19,36 @@ sample_chunks = [
     "Risk factors remain a concern."
 ]
 
+chunk_records = []
+
+for idx, chunk in enumerate(
+    sample_chunks,
+    start=1
+):
+
+    chunk_records.append(
+
+        {
+            "document_name":
+            "sample.pdf",
+
+            "page":
+            1,
+
+            "chunk_id":
+            f"chunk_{idx:04d}",
+
+            "chunk_type":
+            "base",
+
+            "content_type":
+            "text",
+
+            "chunk_text":
+            chunk
+        }
+    )
+
 ingestor = (
     QdrantIngestor()
 )
@@ -26,7 +56,5 @@ ingestor = (
 ingestor.ingest_chunks(
     collection_name="documents",
 
-    chunks=sample_chunks,
-
-    document_name="sample.pdf"
+    chunk_records=chunk_records
 )
