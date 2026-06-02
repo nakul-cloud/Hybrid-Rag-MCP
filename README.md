@@ -2,13 +2,38 @@
 
 ## Overview
 
-Hybrid PDF + OCR Retrieval Pipeline with MCP is a modular Retrieval-Augmented Generation (RAG) system designed for complex enterprise documents.
-
-It combines PDF parsing, hybrid chunking, embeddings, vector storage, and MCP-based orchestration to deliver grounded answers with sources.
+Hybrid PDF + OCR Retrieval Pipeline with MCP is a modular Retrieval-Augmented Generation (RAG) system built for complex enterprise documents. It combines PDF parsing, hybrid chunking, embeddings, vector storage, and MCP orchestration to deliver grounded answers with citations.
 
 ---
 
-## What Is Done
+## Problem Statement
+
+Traditional RAG pipelines work well on clean PDFs but fail on real-world documents with:
+
+* Multi-column layouts
+* Tables and charts
+* Scanned pages
+* Headers, footers, and footnotes
+* Mixed document structures
+
+This project builds a document intelligence pipeline that preserves structure, reduces noise, and improves retrieval quality.
+
+---
+
+## Objectives
+
+* Build a layout-aware ingestion pipeline
+* Support digital and scanned PDFs
+* Preserve document hierarchy and metadata
+* Store embeddings in Qdrant
+* Provide MCP-based tool orchestration
+* Enable grounded question answering
+
+---
+
+## Project Status
+
+Completed Modules:
 
 * PDF Parser MCP
 * Hybrid Chunking
@@ -28,9 +53,10 @@ It combines PDF parsing, hybrid chunking, embeddings, vector storage, and MCP-ba
 ```mermaid
 flowchart TB
     A[PDF] --> B[PDF Parser MCP]
-    B --> C[Hybrid Chunking]
-    C --> D[Hybrid Embeddings]
-    D --> E[Qdrant]
+    B --> C[Metadata Filtering]
+    C --> D[Hybrid Chunking]
+    D --> E[Hybrid Embeddings]
+    E --> F[Qdrant]
 ```
 
 ### Query Flow
@@ -42,6 +68,28 @@ flowchart TB
     S --> G[Gemini]
     G --> A[Grounded Answer]
 ```
+
+---
+
+## MCP Servers
+
+### PDF Parser MCP
+
+* Extracts metadata, page text, and document text.
+
+### Retrieval MCP
+
+* `semantic_search`
+* `get_collection_stats`
+* `list_documents`
+* `ask_documents`
+
+### Planned MCP Servers
+
+* OCR MCP
+* Table Extraction MCP
+* Layout Analysis MCP
+* Vector Store MCP
 
 ---
 
@@ -65,35 +113,14 @@ Phase 13 - Reranking              NEXT
 
 ---
 
-## Core Modules
-
-### PDF Parser MCP
-
-* Extracts metadata, page text, and document text.
-
-### Ingestion Pipeline
-
-* Hybrid chunking
-* Metadata filtering
-* Embedding generation
-* Qdrant upsert
-
-### Retrieval MCP
-
-* `semantic_search`
-* `get_collection_stats`
-* `list_documents`
-* `ask_documents`
-
----
-
 ## Key Capabilities
 
 * Hybrid chunking with context windows
-* Embeddings with sentence-transformers
+* Metadata filtering for noisy chunks
+* Sentence-transformer embeddings
 * Qdrant vector search
 * Gemini-powered grounded answers
-* MCP orchestration for tool separation
+* MCP orchestration for modular services
 
 ---
 
@@ -118,6 +145,20 @@ hybrid-rag-mcp/
 ├── data/
 ├── tests/
 └── main.py
+```
+
+---
+
+## Verification
+
+Quick checks:
+
+```bash
+uv run python tests/test_chunking.py
+uv run python tests/test_embeddings.py
+uv run python tests/test_pipeline.py
+uv run python tests/test_retrieval.py
+uv run python tests/test_rag.py
 ```
 
 ---
