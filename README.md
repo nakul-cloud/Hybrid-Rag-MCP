@@ -14,15 +14,34 @@ The system intelligently analyzes uploaded documents, routes them through specia
 
 # Project Status
 
-Phase 1  PDF Parser MCP        DONE
-Phase 2  Chunking              DONE
-Phase 3  Embeddings            DONE
-Phase 4  Qdrant                DONE
-Phase 5  Ingestion Pipeline    DONE
-Phase 6  Retrieval MCP         DONE
-Phase 7  Groq RAG              NEXT
-Phase 8  OCR MCP               NEXT
-Phase 9  Table MCP             NEXT
+Completed Modules:
+
+* PDF Parser MCP
+* Hybrid Chunking
+* Hybrid Embeddings
+* Qdrant Vector Store
+* Ingestion Pipeline
+* Retrieval Engine
+* Retrieval MCP
+* Gemini-Powered RAG
+
+---
+
+# Roadmap
+
+Phase 1  PDF Parser MCP         DONE
+Phase 2  Hybrid Chunking        DONE
+Phase 3  Hybrid Embeddings      DONE
+Phase 4  Qdrant Integration     DONE
+Phase 5  Ingestion Pipeline     DONE
+Phase 6  Retrieval MCP          DONE
+Phase 7  Gemini RAG             DONE
+Phase 8  Document Ingestion MCP NEXT
+Phase 9  OCR MCP                NEXT
+Phase 10 Table Extraction MCP   NEXT
+Phase 11 Layout Analysis MCP    NEXT
+Phase 12 Hybrid Retrieval       NEXT
+Phase 13 Reranking              NEXT
 
 ---
 
@@ -83,7 +102,7 @@ Analyze uploaded documents and identify:
 
 ---
 
-## OCR Processing
+## OCR Processing (Planned)
 
 Extract text from:
 
@@ -93,7 +112,7 @@ Extract text from:
 
 ---
 
-## Table Extraction
+## Table Extraction (Planned)
 
 Preserve structured information including:
 
@@ -104,7 +123,7 @@ Preserve structured information including:
 
 ---
 
-## Layout-Aware Parsing
+## Layout-Aware Parsing (Planned)
 
 Detect and separate:
 
@@ -149,30 +168,33 @@ Allow users to ask natural language questions over ingested documents while main
 # System Architecture
 
 ```text
-User Query
-        |
-        v
-Retrieval MCP
-        |
-        v
-Retrieval Engine
-        |
-        v
-Qdrant
-
 PDF
         |
         v
 PDF Parser MCP
         |
         v
-Chunking
+Hybrid Chunking
         |
         v
-Embedding
+Hybrid Embeddings
         |
         v
 Qdrant
+
+User Query
+        |
+        v
+Retrieval MCP
+        |
+        v
+Semantic Search
+        |
+        v
+Gemini
+        |
+        v
+Grounded Answer
 ```
 
 ---
@@ -192,7 +214,7 @@ Responsibilities:
 
 ---
 
-## OCR MCP
+## OCR MCP (Planned)
 
 Responsibilities:
 
@@ -202,7 +224,7 @@ Responsibilities:
 
 ---
 
-## Table Extraction MCP
+## Table Extraction MCP (Planned)
 
 Responsibilities:
 
@@ -212,7 +234,7 @@ Responsibilities:
 
 ---
 
-## Layout Analysis MCP
+## Layout Analysis MCP (Planned)
 
 Responsibilities:
 
@@ -223,7 +245,7 @@ Responsibilities:
 
 ---
 
-## Vector Store MCP
+## Vector Store MCP (Planned)
 
 Responsibilities:
 
@@ -240,6 +262,19 @@ Responsibilities:
 * Semantic search
 * Context assembly
 * Retrieval orchestration
+
+---
+
+# Future Enhancements
+
+Not yet implemented:
+
+* Document Ingestion MCP
+* OCR MCP
+* Table Extraction MCP
+* Layout Analysis MCP
+* Hybrid Retrieval
+* Reranking
 
 ---
 

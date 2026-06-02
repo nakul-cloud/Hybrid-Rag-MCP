@@ -410,13 +410,16 @@ Completed
 PDF
     |
     v
-PDF Parser MCP
+Parser
     |
     v
-Hybrid Chunker
+Metadata Filtering
     |
     v
-Hybrid Embedder
+Hybrid Chunking
+    |
+    v
+Embeddings
     |
     v
 Qdrant
@@ -449,3 +452,24 @@ Vectors Stored: 40
         "content_type": "text"
 }
 ```
+
+---
+
+### Metadata Filtering
+
+Purpose:
+
+Remove noisy chunks before embedding.
+
+Current Rules:
+
+* TABLE OF CONTENTS
+* Page No
+* Sr No
+* Very short chunks
+
+Benefits:
+
+* Better retrieval quality
+* Reduced vector count
+* Cleaner search results

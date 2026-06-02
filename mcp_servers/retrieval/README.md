@@ -1,4 +1,4 @@
-# Retrieval MCP (V1)
+# Retrieval MCP (V2)
 
 ## Overview
 
@@ -7,7 +7,7 @@ Retrieval MCP exposes semantic search over stored document chunks.
 Version:
 
 ```text
-V1
+V2
 ```
 
 Status:
@@ -30,13 +30,19 @@ Completed
 # Architecture
 
 ```text
-Query
+Question
   |
   v
-Retrieval MCP
+Qdrant Retrieval
   |
   v
-Qdrant
+Top K Chunks
+  |
+  v
+Gemini
+  |
+  v
+Answer
 ```
 
 ---
@@ -136,6 +142,37 @@ Output:
 
 ---
 
+## ask_documents
+
+Runs Gemini-powered RAG over the top K chunks.
+
+Input:
+
+```json
+{
+  "query": "What is the research gap?",
+  "top_k": 8
+}
+```
+
+Output:
+
+```json
+{
+  "answer": "...",
+  "sources": [
+    {
+      "document_name": "sample.pdf",
+      "page": 9,
+      "score": 0.48,
+      "snippet": "..."
+    }
+  ]
+}
+```
+
+---
+
 # Schemas
 
 ## RetrievalRequest
@@ -181,28 +218,19 @@ Output:
 
 ---
 
-# Verification Results
+# Verification
 
-## Retrieval Engine Test
-
-Command:
-
-```bash
-uv run python tests/test_retrieval.py
-```
-
-Status:
-
-```text
-PASSED
-```
+✅ MCP Inspector
+✅ Semantic Search
+✅ Gemini Integration
+✅ Source Attribution
 
 ---
 
 # Future Roadmap
 
-## V2
+## V3
 
-* Groq RAG integration
-* Ask-documents MCP tool
-* Answer grounding with citations
+* Multimodal retrieval
+* Reranking
+* Hybrid search (dense + sparse)
