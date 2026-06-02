@@ -10,26 +10,37 @@ from mcp_servers.retrieval.retrieval_engine import (
     RetrievalEngine
 )
 
-engine = RetrievalEngine()
-
-results = (
-    engine.semantic_search(
-        "What is this document about?"
-    )
+from mcp_servers.retrieval.schemas import (
+    RetrievalRequest
 )
 
-for item in results:
+engine = RetrievalEngine()
 
-    print("=" * 60)
+request = RetrievalRequest(
+    query="What is this document about?",
+    top_k=5
+)
+
+response = engine.semantic_search(
+    request
+)
+
+for result in response.results:
+
+    print("=" * 80)
 
     print(
-        f"Score: {item['score']}"
+        f"Document: {result.document_name}"
     )
 
     print(
-        f"Page: {item['page']}"
+        f"Page: {result.page}"
     )
 
     print(
-        item["chunk_text"][:500]
+        f"Score: {result.score:.4f}"
+    )
+
+    print(
+        result.chunk_text[:500]
     )
