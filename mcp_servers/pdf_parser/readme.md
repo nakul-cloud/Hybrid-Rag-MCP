@@ -1,6 +1,8 @@
-# PDF Parser MCP (V1)
+# PDF Parser MCP
 
-## Overview
+## V1 (Archived)
+
+### Overview
 
 PDF Parser MCP is the first Model Context Protocol (MCP) server developed as part of the Hybrid PDF + OCR Retrieval Pipeline.
 
@@ -22,7 +24,7 @@ Completed
 
 ---
 
-# Responsibilities
+### Responsibilities
 
 The PDF Parser MCP server is responsible for:
 
@@ -45,31 +47,24 @@ These capabilities will be implemented in separate MCP servers.
 
 ---
 
-# Architecture
+### Architecture
 
 ```text
 PDF File
-    │
-    ▼
+  |
+  v
 PDF Parser MCP
-    │
- ┌──┼───────────────────┐
- │  │                   │
- ▼  ▼                   ▼
-
-Metadata
-Extraction
-
-Page
-Extraction
-
-Document
-Extraction
+  |
+  +-------------------+
+  |        |          |
+  v        v          v
+Metadata  Page       Document
+Extraction Extraction Extraction
 ```
 
 ---
 
-# Technology Stack
+### Technology Stack
 
 Framework:
 
@@ -100,15 +95,15 @@ Docker Desktop
 
 ---
 
-# Implemented Tools
+### Implemented Tools
 
-## parse_pdf_tool
+#### parse_pdf_tool
 
-### Purpose
+Purpose:
 
 Returns a high-level summary of a PDF document.
 
-### Input
+Input:
 
 ```json
 {
@@ -116,7 +111,7 @@ Returns a high-level summary of a PDF document.
 }
 ```
 
-### Output
+Output:
 
 ```json
 {
@@ -128,13 +123,13 @@ Returns a high-level summary of a PDF document.
 
 ---
 
-## get_pdf_metadata_tool
+#### get_pdf_metadata_tool
 
-### Purpose
+Purpose:
 
 Extract PDF metadata.
 
-### Input
+Input:
 
 ```json
 {
@@ -142,7 +137,7 @@ Extract PDF metadata.
 }
 ```
 
-### Output
+Output:
 
 ```json
 {
@@ -154,13 +149,13 @@ Extract PDF metadata.
 
 ---
 
-## extract_page_tool
+#### extract_page_tool
 
-### Purpose
+Purpose:
 
 Extract text from a specific page.
 
-### Input
+Input:
 
 ```json
 {
@@ -169,7 +164,7 @@ Extract text from a specific page.
 }
 ```
 
-### Output
+Output:
 
 ```json
 {
@@ -180,13 +175,13 @@ Extract text from a specific page.
 
 ---
 
-## extract_document_text_tool
+#### extract_document_text_tool
 
-### Purpose
+Purpose:
 
 Extract text from all pages.
 
-### Input
+Input:
 
 ```json
 {
@@ -194,7 +189,7 @@ Extract text from all pages.
 }
 ```
 
-### Output
+Output:
 
 ```json
 {
@@ -209,7 +204,7 @@ Extract text from all pages.
 
 ---
 
-# Project Structure
+### Project Structure
 
 ```text
 pdf_parser/
@@ -224,9 +219,9 @@ pdf_parser/
 
 ---
 
-# Verification
+### Verification
 
-## MCP Inspector
+#### MCP Inspector
 
 Connection Method:
 
@@ -248,7 +243,7 @@ run python -m mcp_servers.pdf_parser.server
 
 ---
 
-## Tool Discovery
+#### Tool Discovery
 
 Status:
 
@@ -267,7 +262,7 @@ extract_document_text_tool
 
 ---
 
-## PDF Summary Extraction
+#### PDF Summary Extraction
 
 Status:
 
@@ -283,7 +278,7 @@ Document information successfully extracted.
 
 ---
 
-## Metadata Extraction
+#### Metadata Extraction
 
 Status:
 
@@ -299,7 +294,7 @@ Metadata successfully extracted.
 
 ---
 
-## Page Extraction
+#### Page Extraction
 
 Status:
 
@@ -315,7 +310,7 @@ Page-level extraction successfully completed.
 
 ---
 
-## Full Document Extraction
+#### Full Document Extraction
 
 Status:
 
@@ -331,9 +326,9 @@ Full document text successfully extracted.
 
 ---
 
-# Challenges Encountered
+### Challenges Encountered
 
-## Tool Input Formatting
+#### Tool Input Formatting
 
 Issue:
 
@@ -349,7 +344,7 @@ Tool input structure was corrected and validated.
 
 ---
 
-# Deliverables
+### Deliverables
 
 Completed:
 
@@ -362,7 +357,7 @@ Completed:
 
 ---
 
-# Current Limitations
+### Current Limitations
 
 Current version does not support:
 
@@ -375,22 +370,130 @@ Current version does not support:
 
 ---
 
-# Next Version (V2)
-
-Planned enhancements:
-
-* Integration with document ingestion pipeline
-* Chunk generation
-* Metadata enrichment
-* Embedding preparation
-* Qdrant integration support
-
----
-
-# Status
+### Status
 
 ```text
 Version: V1
 Status: Stable
 Verification: Passed
 ```
+
+---
+
+## V2 (Current)
+
+### Overview
+
+V2 integrates the PDF parser with the ingestion pipeline and downstream vector storage while keeping the parser focused on extraction tasks.
+
+Version:
+
+```text
+V2
+```
+
+Status:
+
+```text
+Completed
+```
+
+---
+
+### Completed Enhancements
+
+* Integrated with Ingestion Pipeline
+* Hybrid Chunking Support
+* Embedding Preparation
+* Metadata Enrichment
+* Qdrant Integration Support
+
+---
+
+### Current Flow
+
+```text
+PDF Parser MCP
+  |
+  v
+Ingestion Pipeline
+  |
+  v
+Hybrid Chunker
+  |
+  v
+Hybrid Embedder
+  |
+  v
+Qdrant
+```
+
+---
+
+### Metadata Enrichment Status
+
+Current payload:
+
+```json
+{
+  "document_name": "sample.pdf",
+  "page": 1,
+  "chunk_id": "chunk_0001",
+  "chunk_type": "base",
+  "content_type": "text"
+}
+```
+
+Planned metadata fields:
+
+```json
+{
+  "section": "...",
+  "source": "pdf",
+  "ingestion_timestamp": "...",
+  "document_type": "..."
+}
+```
+
+Requires:
+
+* Layout MCP
+* Section detection
+
+---
+
+### Project Status
+
+```text
+PDF Parser MCP V2              DONE
+Hybrid Chunking                DONE
+Hybrid Embedder                DONE
+Qdrant Vector Store            DONE
+Document Ingestion Pipeline    DONE
+Retrieval MCP                  NEXT
+OCR MCP                        NEXT
+Table Extraction MCP           NEXT
+Layout Analysis MCP            NEXT
+```
+
+---
+
+## V3 (Planned)
+
+### Theme
+
+Layout-Aware Parsing
+
+### Features
+
+* Heading detection
+* Multi-column parsing
+* Section extraction
+* Page layout metadata
+* Reading order preservation
+
+### Planned Tools
+
+* extract_layout()
+* extract_sections()
+* extract_document_structure()
