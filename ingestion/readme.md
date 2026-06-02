@@ -1,4 +1,4 @@
-# Hybrid Chunking Pipeline (V1)
+# Document Ingestion Pipeline (V1.5)
 
 ## Overview
 
@@ -13,13 +13,61 @@ To address this limitation, this project implements a Hybrid Chunking Strategy t
 Version:
 
 ```text
-V1
+V1.5
 ```
 
 Status:
 
 ```text
 Completed
+```
+
+---
+
+# Workflow
+
+```text
+PDF
+    |
+    v
+PDF Parser MCP
+    |
+    v
+Hybrid Chunker
+    |
+    v
+Hybrid Embedder
+    |
+    v
+Qdrant
+```
+
+---
+
+# Verification
+
+```text
+PDF Processed: sample.pdf
+
+Pages Extracted: 19
+
+Chunks Created: 40
+
+Vectors Stored: 40
+```
+
+---
+
+# Metadata
+
+```json
+{
+    "document_name": "sample.pdf",
+    "page": 1,
+    "chunk_id": "chunk_0001",
+    "chunk_type": "base",
+    "content_type": "text"
+}
 ```
 
 ---
