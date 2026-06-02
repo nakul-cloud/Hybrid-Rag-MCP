@@ -470,7 +470,7 @@ Hybrid Chunking                DONE
 Hybrid Embedder                DONE
 Qdrant Vector Store            DONE
 Document Ingestion Pipeline    DONE
-Retrieval MCP                  NEXT
+Retrieval MCP                  DONE
 OCR MCP                        NEXT
 Table Extraction MCP           NEXT
 Layout Analysis MCP            NEXT
