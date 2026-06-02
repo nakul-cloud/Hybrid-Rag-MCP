@@ -42,9 +42,15 @@ class IngestionPipeline:
             f"Pages Extracted: {len(pages)}"
         )
 
-        all_chunks = []
+        chunk_records = []
+
+        chunk_counter = 1
 
         for page in pages:
+
+            page_number = (
+                page["page_number"]
+            )
 
             page_text = (
                 page["content"]
@@ -62,22 +68,42 @@ class IngestionPipeline:
                 ]
             )
 
-            all_chunks.extend(
-                base_chunks
-            )
+            for chunk in base_chunks:
+
+                chunk_records.append(
+
+                    {
+                        "document_name":
+                        Path(pdf_path).name,
+
+                        "page":
+                        page_number,
+
+                        "chunk_id":
+                        f"chunk_{chunk_counter:04d}",
+
+                        "chunk_type":
+                        "base",
+
+                        "content_type":
+                        "text",
+
+                        "chunk_text":
+                        chunk
+                    }
+                )
+
+                chunk_counter += 1
 
         print(
-            f"Chunks Created: {len(all_chunks)}"
+            f"Chunks Created: {len(chunk_records)}"
         )
 
         self.ingestor.ingest_chunks(
             collection_name="documents",
 
-            chunks=all_chunks,
-
-            document_name=Path(
-                pdf_path
-            ).name
+            chunk_records=
+            chunk_records
         )
 
         print(
