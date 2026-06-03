@@ -58,3 +58,7 @@ ingestor.ingest_chunks(
 
     chunk_records=chunk_records
 )
+
+print(
+    "Sample chunks ingested."
+)

@@ -101,6 +101,35 @@ Troubleshooting:
 
 ---
 
+## test_document_ingestion.py
+
+Purpose:
+
+Ingest a sample document using the document ingestion service.
+
+Command:
+
+```bash
+uv run python tests/test_document_ingestion.py
+```
+
+Expected Output:
+
+```text
+{'status': 'success', 'document_name': 'sample.pdf', 'file_type': '.pdf', 'details': {...}}
+```
+
+Prerequisites:
+
+* Qdrant is running.
+* `data/samples/sample.pdf` exists.
+
+Troubleshooting:
+
+* If ingestion fails, confirm the PDF path and that the PDF parser is installed.
+
+---
+
 ## test_embeddings.py
 
 Purpose:
@@ -134,6 +163,37 @@ Troubleshooting:
 
 ---
 
+## test_gemini.py
+
+Purpose:
+
+Verify Gemini connectivity and basic generation.
+
+Command:
+
+```bash
+uv run python tests/test_gemini.py
+```
+
+Expected Output:
+
+```text
+Connection Test: True
+Model: <model name>
+Response:
+<text>
+```
+
+Prerequisites:
+
+* `GEMINI_API_KEY` available via environment or `.env`.
+
+Troubleshooting:
+
+* If auth fails, verify the API key and that `.env` is loaded.
+
+---
+
 ## test_ingest.py
 
 Purpose:
@@ -159,7 +219,7 @@ Prerequisites:
 
 Troubleshooting:
 
-* This script uses the old `ingest_chunks(chunks, document_name)` signature. The current API expects `chunk_records`. Update this test if you want it to run against V1.5.
+* If ingestion fails, confirm Qdrant is running and the collection exists.
 
 ---
 
@@ -220,6 +280,40 @@ Prerequisites:
 Troubleshooting:
 
 * If results are empty, run the ingestion pipeline first.
+
+---
+
+## test_rag.py
+
+Purpose:
+
+Run Gemini-powered RAG over ingested chunks.
+
+Command:
+
+```bash
+uv run python tests/test_rag.py
+```
+
+Expected Output:
+
+```text
+ANSWER
+<text>
+
+SOURCES
+{...}
+```
+
+Prerequisites:
+
+* Qdrant is running and has ingested data.
+* `GEMINI_API_KEY` available via environment or `.env`.
+
+Troubleshooting:
+
+* If sources are empty, run the ingestion pipeline first.
+* If Gemini fails, verify API credentials.
 
 ---
 
