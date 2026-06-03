@@ -1,4 +1,4 @@
-from uuid import uuid4
+import hashlib
 
 from qdrant_client.models import PointStruct
 
@@ -50,7 +50,15 @@ class QdrantIngestor:
 
             point = PointStruct(
 
-                id=str(uuid4()),
+                id=hashlib.md5(
+
+                    (
+                        record["document_name"]
+                        +
+                        record["chunk_id"]
+                    ).encode()
+
+                ).hexdigest(),
 
                 vector=vector,
 
