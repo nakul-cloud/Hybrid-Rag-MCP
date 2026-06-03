@@ -29,6 +29,19 @@ This folder contains the MCP servers that make up the document intelligence pipe
   * Status: Planned (V1)
   * Responsibilities: MCP access to vector store operations
 
+---
+
+## Server Summary
+
+| Server | Status | Key Responsibilities |
+|--------|--------|----------------------|
+| pdf_parser | Completed (V2) | PDF parsing, metadata extraction, page text extraction |
+| retrieval | Completed (V3) | Semantic search, collection stats, document listing, Gemini RAG, document ingestion, document-level filtering |
+| ocr | Planned (V1) | OCR for scanned pages |
+| table_extractor | Planned (V1) | Table detection and extraction |
+| layout_analyzer | Planned (V1) | Layout parsing and section detection |
+| vector_store | Planned (V1) | MCP access to vector store operations |
+
 ## Running Locally
 
 Use the MCP server list in VS Code or run modules directly:

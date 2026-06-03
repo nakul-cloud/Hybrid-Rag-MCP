@@ -4,6 +4,29 @@ This README consolidates the per-test notes for quick reference.
 
 ---
 
+## Quick Index
+
+* test_chunking.py
+* test_collection_info.py
+* test_create_collection.py
+* test_document_ingestion.py
+* test_document_counts.py
+* test_document_filter.py
+* test_documents.py
+* test_embeddings.py
+* test_gemini.py
+* test_ingest.py
+* test_list_collections.py
+* test_retrieval.py
+* test_rag.py
+* test_pipeline.py
+* test_qdrant_connection.py
+* test_delete_collections.py
+* test_bm25.py
+* test_scroll_points.py
+
+---
+
 ## test_chunking.py
 
 Purpose:

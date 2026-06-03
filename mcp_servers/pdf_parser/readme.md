@@ -62,6 +62,16 @@ Metadata  Page       Document
 Extraction Extraction Extraction
 ```
 
+#### Architecture (Visual)
+
+```mermaid
+flowchart TB
+    A[PDF File] --> B[PDF Parser MCP]
+    B --> C[Metadata Extraction]
+    B --> D[Page Extraction]
+    B --> E[Document Extraction]
+```
+
 ---
 
 ### Technology Stack

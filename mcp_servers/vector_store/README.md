@@ -27,6 +27,14 @@ Planned
 
 ---
 
+# Planned Workflow
+
+```mermaid
+flowchart TB
+	A[Vector Requests] --> B[Vector Store MCP]
+	B --> C[Qdrant]
+```
+
 # Planned Tools
 
 * list_collections

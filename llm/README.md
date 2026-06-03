@@ -6,6 +6,14 @@ The LLM module wraps Gemini to provide consistent text generation for RAG workfl
 
 ---
 
+## Workflow
+
+```mermaid
+flowchart TB
+	A[Prompt] --> B[Gemini Client]
+	B --> C[Text Response]
+```
+
 ## Files
 
 * gemini_client.py

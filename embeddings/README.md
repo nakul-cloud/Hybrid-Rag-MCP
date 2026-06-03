@@ -18,7 +18,7 @@ Completed
 
 ---
 
-# Model Configuration
+## Model Configuration
 
 Model:
 
@@ -40,7 +40,7 @@ Enabled
 
 ---
 
-# Verification
+## Verification
 
 ```text
 PASSED
@@ -48,7 +48,7 @@ PASSED
 
 ---
 
-# Sample Output
+## Sample Output
 
 ```text
 ==================================================
@@ -64,4 +64,14 @@ VECTOR GENERATED
 Vector Length: 768
 First 10 Values:
 [-0.020141735672950745, -0.03856726735830307, 0.032482411712408066, 0.0007091558072715998, 0.014595510438084602, 0.014186603017151356, 0.008800528943538666, 0.006915652193129063, -0.025747139006853104, 0.03797142952680588]
+```
+
+---
+
+## Workflow
+
+```mermaid
+flowchart TB
+  A[Chunk Text] --> B[Hybrid Embedder]
+  B --> C[Dense Vector]
 ```

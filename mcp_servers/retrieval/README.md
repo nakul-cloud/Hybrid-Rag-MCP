@@ -93,6 +93,16 @@ Responsibilities:
 
 # Tools
 
+## Tool Summary
+
+| Tool | Purpose |
+|------|---------|
+| semantic_search | Search relevant chunks (optionally filtered by document) |
+| ask_documents | Gemini-powered RAG answers |
+| ingest_document | Ingest new PDFs into Qdrant |
+| list_documents | List indexed documents |
+| get_collection_stats | Collection statistics |
+
 ## semantic_search
 
 Input:

@@ -26,6 +26,14 @@ Planned
 
 ---
 
+# Planned Workflow
+
+```mermaid
+flowchart TB
+	A[Document Page] --> B[Table Extractor MCP]
+	B --> C[Structured Tables]
+```
+
 # Planned Tools
 
 * extract_tables

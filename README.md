@@ -21,6 +21,8 @@ Phase 9: Duplicate Protection              ✅
 Current Focus:
 Hybrid Retrieval (BM25 + Dense Search)
 
+---
+
 ## Problem Statement
 
 Traditional RAG pipelines work well on clean PDFs but fail on real-world documents with:
@@ -47,6 +49,29 @@ This project builds a document intelligence pipeline that preserves structure, r
 ---
 
 ## Architecture
+
+### Visual Flow
+
+```mermaid
+flowchart TB
+    subgraph Query
+        U[User Query] --> RM[Retrieval MCP]
+        RM --> SS[Semantic Search]
+        SS --> RC[Relevant Chunks]
+        RC --> GR[Gemini RAG]
+        GR --> GA[Generated Answer]
+    end
+
+    subgraph Ingestion
+        DU[Document Upload] --> DIM[Document Ingestion MCP]
+        DIM --> PP[PDF Parser]
+        PP --> HC[Hybrid Chunking]
+        HC --> EG[Embedding Generation]
+        EG --> QV[Qdrant Vector Store]
+    end
+```
+
+### Text Flow
 
 ```
 User Query

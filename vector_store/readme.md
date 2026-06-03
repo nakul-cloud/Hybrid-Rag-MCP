@@ -49,6 +49,15 @@ Qdrant Vector Store
 Collection
 ```
 
+#### Architecture (Visual)
+
+```mermaid
+flowchart TB
+    A[Chunk] --> B[Embedding]
+    B --> C[Qdrant Vector Store]
+    C --> D[Collection]
+```
+
 ---
 
 ### Technology Stack

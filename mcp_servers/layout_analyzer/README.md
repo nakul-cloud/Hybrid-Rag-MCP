@@ -27,6 +27,14 @@ Planned
 
 ---
 
+# Planned Workflow
+
+```mermaid
+flowchart TB
+	A[Document Page] --> B[Layout Analyzer MCP]
+	B --> C[Layout Metadata]
+```
+
 # Planned Tools
 
 * extract_layout

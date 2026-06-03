@@ -260,6 +260,16 @@ The ingestion pipeline uses:
 
 to prevent duplicate vector storage.
 
+### Duplicate Protection Flow
+
+```mermaid
+flowchart TB
+    A[Document] --> B[Document Existence Check]
+    B -->|Exists| C[Skip Ingestion]
+    B -->|New| D[Create Content-Based IDs]
+    D --> E[Qdrant Upsert]
+```
+
 ---
 
 ## Future Enhancements

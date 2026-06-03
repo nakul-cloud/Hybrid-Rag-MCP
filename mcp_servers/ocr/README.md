@@ -26,6 +26,14 @@ Planned
 
 ---
 
+# Planned Workflow
+
+```mermaid
+flowchart TB
+	A[Scanned Page] --> B[OCR MCP]
+	B --> C[OCR Text Output]
+```
+
 # Planned Tools
 
 * extract_ocr_text
