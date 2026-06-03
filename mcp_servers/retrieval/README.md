@@ -99,6 +99,7 @@ Responsibilities:
 |------|---------|
 | semantic_search | Search relevant chunks (optionally filtered by document) |
 | ask_documents | Gemini-powered RAG answers |
+| bm25_search | Keyword search using BM25 |
 | ingest_document | Ingest new PDFs into Qdrant |
 | list_documents | List indexed documents |
 | get_collection_stats | Collection statistics |
@@ -237,6 +238,38 @@ If the document already exists, the tool returns:
   "document_name": "sample.pdf",
   "message": "Document already exists"
 }
+```
+
+---
+
+## bm25_search
+
+Runs BM25 keyword search over stored chunks.
+
+Input:
+
+```json
+{
+  "query": "research gap",
+  "top_k": 5
+}
+```
+
+Output:
+
+```json
+[
+  {
+    "document_name": "sample.pdf",
+    "page": 9,
+    "section": "5 Research Gap",
+    "chunk_id": "chunk_0017",
+    "chunk_type": "base",
+    "content_type": "text",
+    "chunk_text": "...",
+    "score": 4.21
+  }
+]
 ```
 
 ---
