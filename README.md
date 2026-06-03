@@ -56,8 +56,11 @@ This project builds a document intelligence pipeline that preserves structure, r
 ```mermaid
 flowchart TB
     U[User Query] --> RM[Retrieval MCP]
-    RM --> SS[Semantic Search]
-    SS --> RC[Relevant Chunks]
+    RM --> DR[Dense Retrieval]
+    RM --> BR[BM25 Retrieval]
+    DR --> RRF[RRF Fusion]
+    BR --> RRF
+    RRF --> RC[Top Relevant Chunks]
     RC --> GR[Gemini RAG]
     GR --> GA[Generated Answer]
 ```
@@ -82,11 +85,15 @@ User Query
 Retrieval MCP
     |
     v
-Semantic Search
-(Qdrant Vector Store)
+Dense Retrieval (Embeddings + Qdrant)
+    +
+BM25 Keyword Retrieval
     |
     v
-Relevant Chunks
+Reciprocal Rank Fusion (RRF)
+    |
+    v
+Top Relevant Chunks
     |
     v
 Gemini RAG
@@ -130,6 +137,7 @@ Qdrant Vector Store
 
 ### Retrieval
 - Semantic Search
+- BM25 Keyword Search
 - Metadata Filtering
 - Document-Level Search
 - Multi-Document Search

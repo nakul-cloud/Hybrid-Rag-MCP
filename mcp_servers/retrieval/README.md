@@ -35,10 +35,13 @@ Completed
 
 ```mermaid
 flowchart TB
-    Q[Question] --> R[Qdrant]
-    R --> T[Top Chunks]
-    T --> G[Gemini]
-    G --> A[Answer]
+  Q[Question] --> D[Dense Retrieval]
+  Q --> B[BM25 Retrieval]
+  D --> RRF[RRF Fusion]
+  B --> RRF
+  RRF --> T[Top Chunks]
+  T --> G[Gemini]
+  G --> A[Answer]
 ```
 
 ## Ingestion Flow
@@ -100,6 +103,7 @@ Responsibilities:
 | semantic_search | Search relevant chunks (optionally filtered by document) |
 | ask_documents | Gemini-powered RAG answers |
 | bm25_search | Keyword search using BM25 |
+| hybrid_search | Dense + BM25 search with RRF fusion |
 | ingest_document | Ingest new PDFs into Qdrant |
 | list_documents | List indexed documents |
 | get_collection_stats | Collection statistics |
@@ -253,6 +257,39 @@ Input:
   "query": "research gap",
   "top_k": 5
 }
+```
+
+---
+
+## hybrid_search
+
+Runs dense + BM25 retrieval and fuses results with RRF.
+
+Input:
+
+```json
+{
+  "query": "research gap",
+  "top_k": 5,
+  "document_name": "sample.pdf"
+}
+```
+
+Output:
+
+```json
+[
+  {
+    "document_name": "sample.pdf",
+    "page": 9,
+    "section": "5 Research Gap",
+    "chunk_id": "chunk_0017",
+    "chunk_type": "base",
+    "content_type": "text",
+    "chunk_text": "...",
+    "score": 0.12
+  }
+]
 ```
 
 Output:

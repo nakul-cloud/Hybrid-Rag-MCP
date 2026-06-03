@@ -12,8 +12,8 @@ Each server focuses on a single responsibility and exposes a small tool surface 
 
 * retrieval
   * Status: Completed (V3)
-  * Responsibilities: Semantic search, collection stats, document listing, Gemini RAG, document ingestion, document-level filtering
-  * Tools: semantic_search, get_collection_stats, list_documents, ask_documents, ingest_document
+  * Responsibilities: Hybrid retrieval (dense + BM25), Gemini RAG, document ingestion, document-level filtering, collection stats
+  * Tools: semantic_search, bm25_search, hybrid_search, get_collection_stats, list_documents, ask_documents, ingest_document
 
 * ocr
   * Status: Planned (V1)
@@ -39,6 +39,7 @@ Each server focuses on a single responsibility and exposes a small tool surface 
 |--------|--------|----------------------|
 | pdf_parser | Completed (V2) | PDF parsing, metadata extraction, page text extraction |
 | retrieval | Completed (V3) | Semantic search, collection stats, document listing, Gemini RAG, document ingestion, document-level filtering |
+| retrieval | Completed (V3) | Hybrid retrieval (dense + BM25), Gemini RAG, document ingestion, document-level filtering, collection stats |
 | ocr | Planned (V1) | OCR for scanned pages |
 | table_extractor | Planned (V1) | Table detection and extraction |
 | layout_analyzer | Planned (V1) | Layout parsing and section detection |
