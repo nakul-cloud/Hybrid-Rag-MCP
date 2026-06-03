@@ -54,9 +54,9 @@ class QdrantIngestor:
 
                     (
                         record["document_name"]
-                        +
-                        record["chunk_id"]
-                    ).encode()
+                        + str(record["page"])
+                        + record["chunk_text"]
+                    ).encode("utf-8")
 
                 ).hexdigest(),
 

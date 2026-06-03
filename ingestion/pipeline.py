@@ -16,6 +16,12 @@ from vector_store.ingest import (
     QdrantIngestor
 )
 
+from qdrant_client.models import (
+    Filter,
+    FieldCondition,
+    MatchValue
+)
+
 
 class IngestionPipeline:
 
@@ -31,12 +37,67 @@ class IngestionPipeline:
 
     def process_pdf(
         self,
-        pdf_path: str
+        pdf_path: str,
+        skip_if_exists: bool = True
     ):
 
         print(
             f"\nProcessing: {pdf_path}"
         )
+
+        document_name = (
+            Path(pdf_path).name
+        )
+
+        if skip_if_exists:
+
+            points, _ = (
+                self.ingestor.client.scroll(
+
+                    collection_name="documents",
+
+                    limit=1,
+
+                    with_payload=True,
+
+                    with_vectors=False,
+
+                    scroll_filter=Filter(
+                        must=[
+                            FieldCondition(
+                                key="document_name",
+                                match=MatchValue(
+                                    value=document_name
+                                )
+                            )
+                        ]
+                    )
+                )
+            )
+
+            if points:
+
+                print(
+                    "Document already exists. Skipping ingestion."
+                )
+
+                return {
+
+                    "status":
+                    "skipped",
+
+                    "document_name":
+                    document_name,
+
+                    "pages":
+                    0,
+
+                    "chunks":
+                    0,
+
+                    "vectors":
+                    0
+                }
 
         pages = extract_all_text(
             pdf_path
@@ -89,7 +150,7 @@ class IngestionPipeline:
 
                     {
                         "document_name":
-                        Path(pdf_path).name,
+                        document_name,
 
                         "page":
                         page_number,
