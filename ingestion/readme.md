@@ -52,6 +52,8 @@ flowchart TB
 
 Hybrid chunking combines recursive splitting, overlap, and sliding window context generation to preserve continuity and improve retrieval quality.
 
+V2 adds section detection and section metadata while keeping the existing recursive, overlap, and sliding window logic intact.
+
 ### Implemented Chunking Strategies
 
 #### 1. Recursive Chunking
@@ -168,6 +170,23 @@ Example:
 {
         "context_chunks": [...]
 }
+```
+
+---
+
+### Section-Aware Output (V2)
+
+Section-aware chunking returns a list of chunk records with section metadata:
+
+```python
+[
+    {
+        "chunk_id": "chunk_0001",
+        "section": "1 Introduction",
+        "base_chunk": "...",
+        "context_chunk": "..."
+    }
+]
 ```
 
 ---

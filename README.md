@@ -126,12 +126,14 @@ Qdrant Vector Store
 - Automatic Chunking
 - Embedding Generation
 - Qdrant Storage
+- Section Metadata
 
 ### Retrieval
 - Semantic Search
 - Metadata Filtering
 - Document-Level Search
 - Multi-Document Search
+- Section-Aware Results
 
 ### RAG
 - Gemini-Powered Answers

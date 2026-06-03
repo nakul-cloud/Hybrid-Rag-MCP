@@ -35,6 +35,9 @@ for idx, chunk in enumerate(
             "page":
             1,
 
+            "section":
+            "Sample Section",
+
             "chunk_id":
             f"chunk_{idx:04d}",
 

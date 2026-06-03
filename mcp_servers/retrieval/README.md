@@ -123,6 +123,7 @@ Output:
     {
       "document_name": "sample.pdf",
       "page": 1,
+      "section": "1 Introduction",
       "chunk_id": "chunk_0001",
       "chunk_type": "base",
       "content_type": "text",
@@ -191,6 +192,7 @@ Output:
     {
       "document_name": "sample.pdf",
       "page": 9,
+      "section": "5 Research Gap",
       "score": 0.48,
       "snippet": "..."
     }
@@ -257,6 +259,7 @@ If the document already exists, the tool returns:
 {
   "document_name": "sample.pdf",
   "page": 1,
+  "section": "1 Introduction",
   "chunk_id": "chunk_0001",
   "chunk_type": "base",
   "content_type": "text",
