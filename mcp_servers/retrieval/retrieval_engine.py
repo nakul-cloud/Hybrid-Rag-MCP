@@ -117,6 +117,12 @@ class RetrievalEngine:
                     0
                 ),
 
+                section=
+                payload.get(
+                    "section",
+                    "Unknown"
+                ),
+
                 chunk_id=
                 payload.get(
                     "chunk_id",

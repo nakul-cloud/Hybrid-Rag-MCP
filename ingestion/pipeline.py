@@ -111,8 +111,6 @@ class IngestionPipeline:
 
         chunk_records = []
 
-        chunk_counter = 1
-
         for page in pages:
 
             page_number = (
@@ -123,26 +121,20 @@ class IngestionPipeline:
                 page["content"]
             )
 
-            chunk_result = (
+            chunks = (
                 self.chunker.create_chunks(
                     page_text
                 )
             )
 
-            base_chunks = (
-                chunk_result[
-                    "base_chunks"
-                ]
-            )
-
             total_base_chunks += (
-                len(base_chunks)
+                len(chunks)
             )
 
-            for chunk in base_chunks:
+            for chunk in chunks:
 
                 if ChunkFilter.is_noise_chunk(
-                    chunk
+                    chunk["base_chunk"]
                 ):
                     continue
 
@@ -156,7 +148,10 @@ class IngestionPipeline:
                         page_number,
 
                         "chunk_id":
-                        f"chunk_{chunk_counter:04d}",
+                        chunk["chunk_id"],
+
+                        "section":
+                        chunk["section"],
 
                         "chunk_type":
                         "base",
@@ -165,11 +160,9 @@ class IngestionPipeline:
                         "text",
 
                         "chunk_text":
-                        chunk
+                        chunk["context_chunk"]
                     }
                 )
-
-                chunk_counter += 1
 
         print(
             f"Chunks Created: {len(chunk_records)}"

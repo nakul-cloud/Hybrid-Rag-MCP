@@ -1,3 +1,5 @@
+import re
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
@@ -59,21 +61,134 @@ class HybridChunker:
 
         return windows
 
+    def detect_sections(
+        self,
+        text: str
+    ):
+
+        pattern = re.compile(
+
+            r"(?:^|\n)"
+            r"(\d+(?:\.\d+)?\s+.+)",
+
+            re.MULTILINE
+        )
+
+        matches = list(
+            pattern.finditer(text)
+        )
+
+        sections = []
+
+        if not matches:
+
+            return [
+
+                {
+                    "section":
+                    "Unknown",
+
+                    "text":
+                    text
+                }
+            ]
+
+        first_start = matches[0].start()
+
+        if first_start > 0:
+
+            sections.append(
+
+                {
+                    "section":
+                    "Unknown",
+
+                    "text":
+                    text[:first_start]
+                }
+            )
+
+        for i, match in enumerate(matches):
+
+            start = match.start()
+
+            end = (
+
+                matches[i + 1].start()
+
+                if i + 1 < len(matches)
+
+                else len(text)
+            )
+
+            section_text = (
+                text[start:end].strip()
+            )
+
+            if not section_text:
+                continue
+
+            sections.append(
+
+                {
+                    "section":
+                    match.group(1).strip(),
+
+                    "text":
+                    section_text
+                }
+            )
+
+        return sections
+
     def create_chunks(
         self,
         text: str
     ):
-        recursive_chunks = (
-            self.recursive_chunks(text)
+        sections = (
+            self.detect_sections(text)
         )
 
-        window_chunks = (
-            self.sliding_window_chunks(
-                recursive_chunks
+        chunk_counter = 1
+
+        all_chunks = []
+
+        for section in sections:
+
+            base_chunks = (
+                self.recursive_chunks(
+                    section["text"]
+                )
             )
-        )
 
-        return {
-            "base_chunks": recursive_chunks,
-            "context_chunks": window_chunks
-        }
+            context_chunks = (
+                self.sliding_window_chunks(
+                    base_chunks
+                )
+            )
+
+            for base_chunk, context_chunk in zip(
+                base_chunks,
+                context_chunks
+            ):
+
+                all_chunks.append(
+
+                    {
+                        "chunk_id":
+                        f"chunk_{chunk_counter:04d}",
+
+                        "section":
+                        section["section"],
+
+                        "base_chunk":
+                        base_chunk,
+
+                        "context_chunk":
+                        context_chunk
+                    }
+                )
+
+                chunk_counter += 1
+
+        return all_chunks

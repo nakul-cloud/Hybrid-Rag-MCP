@@ -12,6 +12,7 @@ class RetrievalRequest(BaseModel):
 class RetrievalResult(BaseModel):
     document_name: str
     page: int
+    section: str
     chunk_id: str
     chunk_type: str
     content_type: str
