@@ -25,6 +25,7 @@ Completed
 * Return ranked chunks with metadata
 * Run Gemini-powered question answering
 * Ingest new documents into Qdrant
+* Support document-level filtering
 
 ---
 
@@ -99,7 +100,8 @@ Input:
 ```json
 {
   "query": "revenue growth",
-  "top_k": 5
+  "top_k": 5,
+  "document_name": "sample.pdf"
 }
 ```
 
@@ -165,7 +167,8 @@ Input:
 ```json
 {
   "query": "What is the research gap?",
-  "top_k": 8
+  "top_k": 8,
+  "document_name": "sample.pdf"
 }
 ```
 
@@ -214,6 +217,16 @@ Output:
 }
 ```
 
+If the document already exists, the tool returns:
+
+```json
+{
+  "status": "skipped",
+  "document_name": "sample.pdf",
+  "message": "Document already exists"
+}
+```
+
 ---
 
 # Schemas
@@ -223,7 +236,8 @@ Output:
 ```json
 {
   "query": "...",
-  "top_k": 5
+  "top_k": 5,
+  "document_name": "sample.pdf"
 }
 ```
 
