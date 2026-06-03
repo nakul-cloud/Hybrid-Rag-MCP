@@ -42,6 +42,8 @@ class IngestionPipeline:
             pdf_path
         )
 
+        total_base_chunks = 0
+
         print(
             f"Pages Extracted: {len(pages)}"
         )
@@ -70,6 +72,10 @@ class IngestionPipeline:
                 chunk_result[
                     "base_chunks"
                 ]
+            )
+
+            total_base_chunks += (
+                len(base_chunks)
             )
 
             for chunk in base_chunks:
@@ -118,3 +124,28 @@ class IngestionPipeline:
         print(
             "Ingestion Complete"
         )
+
+        return {
+
+            "pages":
+            len(pages),
+
+            "chunks":
+            len(chunk_records),
+
+            "vectors":
+            len(chunk_records)
+        }
+
+
+def run_ingestion_pipeline(
+    pdf_path: str
+):
+
+    pipeline = (
+        IngestionPipeline()
+    )
+
+    return pipeline.process_pdf(
+        pdf_path
+    )

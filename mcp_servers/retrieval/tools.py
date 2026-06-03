@@ -8,10 +8,16 @@ from mcp_servers.retrieval.schemas import (
 from mcp_servers.retrieval.rag_engine import (
     RAGEngine
 )
+from ingestion.ingestion_service import (
+    DocumentIngestionService
+)
 
 _rag_engine = None
 
 _engine = None
+
+_ingestion_service = None
+
 
 
 def get_engine():
@@ -81,4 +87,24 @@ def ask_documents_tool(
     return rag_engine.ask_documents(
         query=query,
         top_k=top_k
+    )
+def get_ingestion_service():
+
+    global _ingestion_service
+
+    if _ingestion_service is None:
+
+        _ingestion_service = (
+            DocumentIngestionService()
+        )
+
+    return _ingestion_service
+
+
+def ingest_document_tool(
+    file_path: str
+):
+    return (
+        get_ingestion_service()
+        .ingest_document(file_path)
     )

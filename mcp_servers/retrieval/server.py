@@ -1,11 +1,13 @@
 from mcp.server.fastmcp import FastMCP
 
+
 try:
     from .tools import (
         semantic_search_tool,
         get_collection_stats_tool,
         list_documents_tool,
-        ask_documents_tool
+        ask_documents_tool,
+        ingest_document_tool
     )
 except ImportError:
     from pathlib import Path
@@ -19,7 +21,9 @@ except ImportError:
         semantic_search_tool,
         get_collection_stats_tool,
         list_documents_tool,
-        ask_documents_tool
+        ask_documents_tool,
+        ingest_document_tool
+        
     )
 
 mcp = FastMCP("Retrieval MCP")
@@ -64,6 +68,18 @@ def ask_documents(
     return ask_documents_tool(
         query=query,
         top_k=top_k
+    )
+
+@mcp.tool()
+def ingest_document(
+    file_path: str
+):
+    """
+    Ingest a document into Qdrant.
+    """
+
+    return ingest_document_tool(
+        file_path
     )
 
 
