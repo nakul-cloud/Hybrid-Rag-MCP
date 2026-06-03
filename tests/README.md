@@ -127,6 +127,92 @@ Prerequisites:
 Troubleshooting:
 
 * If ingestion fails, confirm the PDF path and that the PDF parser is installed.
+* If you see a "skipped" status, the document already exists and duplicate protection is active.
+
+---
+
+## test_document_counts.py
+
+Purpose:
+
+Count stored points grouped by document name.
+
+Command:
+
+```bash
+uv run python tests/test_document_counts.py
+```
+
+Expected Output:
+
+```text
+{'sample.pdf': 40}
+```
+
+Prerequisites:
+
+* Qdrant is running.
+
+Troubleshooting:
+
+* If counts grow unexpectedly after reingestion, check duplicate protection and point ID strategy.
+
+---
+
+## test_document_filter.py
+
+Purpose:
+
+Run a semantic search filtered to a single document using `document_name`.
+
+Command:
+
+```bash
+uv run python tests/test_document_filter.py
+```
+
+Expected Output:
+
+```text
+sample.pdf 1 0.86
+```
+
+Prerequisites:
+
+* Qdrant is running.
+* `sample.pdf` is ingested.
+
+Troubleshooting:
+
+* If results are empty, confirm the document name matches the stored payload.
+
+---
+
+## test_documents.py
+
+Purpose:
+
+Print the total points stored in the `documents` collection.
+
+Command:
+
+```bash
+uv run python tests/test_documents.py
+```
+
+Expected Output:
+
+```text
+Total Points: <count>
+```
+
+Prerequisites:
+
+* Qdrant is running.
+
+Troubleshooting:
+
+* If the total is zero, run the ingestion pipeline first.
 
 ---
 
@@ -220,6 +306,37 @@ Prerequisites:
 Troubleshooting:
 
 * If ingestion fails, confirm Qdrant is running and the collection exists.
+
+---
+
+## test_bm25.py
+
+Purpose:
+
+Run a BM25 search over indexed chunks (for hybrid retrieval work).
+
+Command:
+
+```bash
+uv run python tests/test_bm25.py
+```
+
+Expected Output:
+
+```text
+Document: <name>
+Page: <number>
+Score: <float>
+<chunk excerpt>
+```
+
+Prerequisites:
+
+* BM25 retriever implementation is available.
+
+Troubleshooting:
+
+* If the module import fails, the hybrid retrieval implementation is not wired yet.
 
 ---
 
@@ -338,6 +455,10 @@ Chunks Created: <count>
 Ingestion Complete
 ```
 
+Notes:
+
+* Duplicate protection may return a skipped response if the document already exists.
+
 Prerequisites:
 
 * Qdrant is running.
@@ -376,6 +497,34 @@ Prerequisites:
 Troubleshooting:
 
 * If you see connection errors, confirm the Qdrant host/port in `vector_store/qdrant_client.py`.
+
+---
+
+## test_delete_collections.py
+
+Purpose:
+
+Delete the `documents` collection (destructive).
+
+Command:
+
+```bash
+uv run python tests/test_delete_collections.py
+```
+
+Expected Output:
+
+```text
+Collection Deleted
+```
+
+Prerequisites:
+
+* Qdrant is running.
+
+Troubleshooting:
+
+* Recreate the collection before ingestion if you delete it.
 
 ---
 
