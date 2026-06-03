@@ -2,12 +2,8 @@ from llm.gemini_client import (
     GeminiClient
 )
 
-from mcp_servers.retrieval.retrieval_engine import (
-    RetrievalEngine
-)
-
-from mcp_servers.retrieval.schemas import (
-    RetrievalRequest
+from mcp_servers.retrieval.hybrid_retriever import (
+    HybridRetriever
 )
 
 
@@ -16,7 +12,7 @@ class RAGEngine:
     def __init__(self):
 
         self.retriever = (
-            RetrievalEngine()
+            HybridRetriever()
         )
 
         self.llm = (
@@ -30,17 +26,11 @@ class RAGEngine:
         document_name: str | None = None
     ):
 
-        request = RetrievalRequest(
-            query=query,
-            top_k=top_k,
-
-            document_name=
-            document_name
-        )
-
-        retrieval_response = (
-            self.retriever.semantic_search(
-                request
+        retrieval_results = (
+            self.retriever.search(
+                query=query,
+                top_k=top_k,
+                document_name=document_name
             )
         )
 
@@ -48,30 +38,34 @@ class RAGEngine:
 
         sources = []
 
-        for result in retrieval_response.results:
+        for result in retrieval_results:
 
             contexts.append(
                 f"""
-Document: {result.document_name}
-Page: {result.page}
+Document: {result["document_name"]}
+Page: {result["page"]}
+Section: {result["section"]}
 
-{result.chunk_text}
+{result["chunk_text"]}
 """
             )
 
             sources.append(
                 {
                     "document_name":
-                    result.document_name,
+                    result["document_name"],
 
                     "page":
-                    result.page,
+                    result["page"],
+
+                    "section":
+                    result["section"],
 
                     "score":
-                    result.score,
+                    result["score"],
 
                     "snippet":
-                    result.chunk_text[:300]
+                    result["chunk_text"][:300]
                 }
             )
 
