@@ -53,27 +53,20 @@ This project builds a document intelligence pipeline that preserves structure, r
 
 ```mermaid
 flowchart TB
-    subgraph Query Flow
-        U[User Query]
-        RM[Retrieval MCP]
-        SS[Semantic Search]
-        RC[Relevant Chunks]
-        GR[Gemini RAG]
-        GA[Generated Answer]
+    U[User Query] --> RM[Retrieval MCP]
+    RM --> SS[Semantic Search]
+    SS --> RC[Relevant Chunks]
+    RC --> GR[Gemini RAG]
+    GR --> GA[Generated Answer]
+```
 
-        U --> RM --> SS --> RC --> GR --> GA
-    end
-
-    subgraph Ingestion Flow
-        DU[Document Upload]
-        DIM[Document Ingestion MCP]
-        PP[PDF Parser]
-        HC[Hybrid Chunking]
-        EG[Embedding Generation]
-        QV[Qdrant Vector Store]
-
-        DU --> DIM --> PP --> HC --> EG --> QV
-    end
+```mermaid
+flowchart TB
+    DU[Document Upload] --> DIM[Document Ingestion MCP]
+    DIM --> PP[PDF Parser]
+    PP --> HC[Hybrid Chunking]
+    HC --> EG[Embedding Generation]
+    EG --> QV[Qdrant Vector Store]
 ```
 
 ### Text Flow
