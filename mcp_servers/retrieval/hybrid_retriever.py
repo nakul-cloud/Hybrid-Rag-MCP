@@ -82,13 +82,18 @@ class HybridRetriever:
         document_name: str | None = None
     ):
 
+        retrieval_k = max(
+            top_k * 3,
+            20
+        )
+
         dense_response = (
             self.dense_retriever
             .semantic_search(
 
                 RetrievalRequest(
                     query=query,
-                    top_k=top_k,
+                    top_k=retrieval_k,
                     document_name=document_name
                 )
             )
@@ -101,7 +106,7 @@ class HybridRetriever:
         bm25_results = (
             self.bm25_retriever.search(
                 query=query,
-                top_k=top_k
+                top_k=retrieval_k
             )
         )
 

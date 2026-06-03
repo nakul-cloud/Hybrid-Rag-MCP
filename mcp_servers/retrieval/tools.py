@@ -11,6 +11,13 @@ from mcp_servers.retrieval.rag_engine import (
 from ingestion.ingestion_service import (
     DocumentIngestionService
 )
+from mcp_servers.retrieval.bm25_qdrant_retriever import (
+    BM25Retriever
+)
+
+from mcp_servers.retrieval.hybrid_retriever import (
+    HybridRetriever
+)
 
 _rag_engine = None
 
@@ -113,4 +120,38 @@ def ingest_document_tool(
     return (
         get_ingestion_service()
         .ingest_document(file_path)
+    )
+
+
+def bm25_search_tool(
+    query: str,
+    top_k: int = 5
+):
+    """
+    BM25 keyword search.
+    """
+
+    retriever = BM25Retriever()
+
+    return retriever.search(
+        query=query,
+        top_k=top_k
+    )
+
+
+def hybrid_search_tool(
+    query: str,
+    top_k: int = 5,
+    document_name: str | None = None
+):
+    """
+    Hybrid search (dense + BM25) with RRF fusion.
+    """
+
+    retriever = HybridRetriever()
+
+    return retriever.search(
+        query=query,
+        top_k=top_k,
+        document_name=document_name
     )

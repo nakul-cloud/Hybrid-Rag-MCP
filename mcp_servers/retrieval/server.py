@@ -7,7 +7,9 @@ try:
         get_collection_stats_tool,
         list_documents_tool,
         ask_documents_tool,
-        ingest_document_tool
+        ingest_document_tool,
+        bm25_search_tool,
+        hybrid_search_tool
     )
 except ImportError:
     from pathlib import Path
@@ -22,7 +24,9 @@ except ImportError:
         get_collection_stats_tool,
         list_documents_tool,
         ask_documents_tool,
-        ingest_document_tool
+        ingest_document_tool,
+        bm25_search_tool,
+        hybrid_search_tool
         
     )
 
@@ -93,6 +97,38 @@ def ingest_document(
 
     return ingest_document_tool(
         file_path
+    )
+
+
+@mcp.tool()
+def bm25_search(
+    query: str,
+    top_k: int = 5
+):
+    """
+    BM25 keyword search.
+    """
+
+    return bm25_search_tool(
+        query=query,
+        top_k=top_k
+    )
+
+
+@mcp.tool()
+def hybrid_search(
+    query: str,
+    top_k: int = 5,
+    document_name: str = ""
+):
+    """
+    Hybrid search (dense + BM25) with RRF fusion.
+    """
+
+    return hybrid_search_tool(
+        query=query,
+        top_k=top_k,
+        document_name=document_name or None
     )
 
 
