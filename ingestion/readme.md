@@ -251,6 +251,17 @@ Vectors Stored: 40
 
 ---
 
+## Duplicate Protection
+
+The ingestion pipeline uses:
+
+* Content-based point IDs
+* Document existence checks
+
+to prevent duplicate vector storage.
+
+---
+
 ## Future Enhancements
 
 Not yet implemented:

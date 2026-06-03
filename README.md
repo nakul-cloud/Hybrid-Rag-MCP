@@ -6,6 +6,21 @@ Hybrid PDF + OCR Retrieval Pipeline with MCP is a modular Retrieval-Augmented Ge
 
 ---
 
+## Current Status
+
+Phase 1: PDF Parser MCP                    ✅
+Phase 2: Chunking Pipeline                 ✅
+Phase 3: Embedding Pipeline                ✅
+Phase 4: Qdrant Integration                ✅
+Phase 5: Document Ingestion MCP            ✅
+Phase 6: Retrieval MCP                     ✅
+Phase 7: Gemini RAG                        ✅
+Phase 8: Document Filtering                ✅
+Phase 9: Duplicate Protection              ✅
+
+Current Focus:
+Hybrid Retrieval (BM25 + Dense Search)
+
 ## Problem Statement
 
 Traditional RAG pipelines work well on clean PDFs but fail on real-world documents with:
@@ -31,76 +46,167 @@ This project builds a document intelligence pipeline that preserves structure, r
 
 ---
 
-## Current Status
-
-```
-PDF Parser MCP            DONE
-Hybrid Chunking           DONE
-Hybrid Embeddings         DONE
-Qdrant Vector Store       DONE
-Ingestion Pipeline        DONE
-Retrieval Engine          DONE
-Gemini RAG                DONE
-Document Ingestion MCP    DONE
-MCP Inspector Testing     DONE
-```
-
----
-
-## Architecture Diagram
-
-```mermaid
-flowchart TB
-    D[Document] --> P[PDF Parser MCP]
-    P --> C[Hybrid Chunking]
-    C --> E[Hybrid Embeddings]
-    E --> Q[Qdrant]
-
-    U[User Query] --> R[Retrieval MCP]
-    R --> G[Gemini RAG]
-    G --> A[Answer]
-```
-
----
-
-## Project Status
-
-Completed Modules:
-
-* PDF Parser MCP
-* Hybrid Chunking
-* Hybrid Embeddings
-* Qdrant Vector Store
-* Ingestion Pipeline
-* Retrieval Engine
-* Retrieval MCP
-* Gemini-Powered RAG
-* Document Ingestion MCP
-* MCP Inspector Testing
-
----
-
 ## Architecture
 
-### Ingestion Flow
+```
+User Query
+    |
+    v
+Retrieval MCP
+    |
+    v
+Semantic Search
+(Qdrant Vector Store)
+    |
+    v
+Relevant Chunks
+    |
+    v
+Gemini RAG
+    |
+    v
+Generated Answer
 
-```mermaid
-flowchart TB
-    A[PDF] --> B[PDF Parser MCP]
-    B --> C[Metadata Filtering]
-    C --> D[Hybrid Chunking]
-    D --> E[Hybrid Embeddings]
-    E --> F[Qdrant]
+Document Upload
+    |
+    v
+Document Ingestion MCP
+    |
+    v
+PDF Parser
+    |
+    v
+Hybrid Chunking
+    |
+    v
+Embedding Generation
+    |
+    v
+Qdrant Vector Store
 ```
 
-### Query Flow
+---
 
-```mermaid
-flowchart TB
-    Q[User Query] --> R[Retrieval MCP]
-    R --> S[Semantic Search]
-    S --> G[Gemini]
-    G --> A[Grounded Answer]
+## Features
+
+### PDF Processing
+- PDF Parsing
+- Metadata Extraction
+- Page-Level Processing
+
+### Ingestion Pipeline
+- Dynamic PDF Upload
+- Automatic Chunking
+- Embedding Generation
+- Qdrant Storage
+
+### Retrieval
+- Semantic Search
+- Metadata Filtering
+- Document-Level Search
+- Multi-Document Search
+
+### RAG
+- Gemini-Powered Answers
+- Context-Aware Responses
+- Source-Based Retrieval
+
+### Reliability
+- Deterministic Qdrant IDs
+- Duplicate Chunk Prevention
+- Duplicate Document Prevention
+
+---
+
+## Retrieval MCP Tools
+
+| Tool | Description |
+|--------|------------|
+| semantic_search | Search relevant chunks |
+| ask_documents | Gemini-powered RAG |
+| ingest_document | Ingest new PDFs |
+| list_documents | List indexed documents |
+| get_collection_stats | Collection statistics |
+
+---
+
+## Document Ingestion Workflow
+
+```text
+PDF
+ ↓
+Document Validation
+ ↓
+Duplicate Check
+ ↓
+PDF Parsing
+ ↓
+Chunking
+ ↓
+Embedding Generation
+ ↓
+Qdrant Upsert
+```
+
+---
+
+## Duplicate Protection
+
+The ingestion pipeline prevents duplicate documents and duplicate chunks using:
+
+1. Content-Based Point IDs
+2. Document Existence Checks
+
+### Point ID Strategy
+
+```text
+MD5(
+    document_name +
+    page +
+    chunk_text
+)
+```
+
+This guarantees identical chunks map to identical Qdrant point IDs.
+
+---
+
+## Supported Workflows
+
+### Single Document QA
+
+```text
+User
+ ↓
+Document Filter
+ ↓
+Semantic Search
+ ↓
+Gemini
+```
+
+### Multi Document QA
+
+```text
+User
+ ↓
+Knowledge Base Search
+ ↓
+Semantic Search
+ ↓
+Gemini
+```
+
+### Dynamic Document Upload
+
+```text
+New PDF
+ ↓
+ingest_document
+ ↓
+Qdrant
+ ↓
+Immediately Searchable
 ```
 
 ---
@@ -135,15 +241,16 @@ Phase 1  - PDF Parser MCP          DONE
 Phase 2  - Hybrid Chunking         DONE
 Phase 3  - Hybrid Embeddings       DONE
 Phase 4  - Qdrant Integration      DONE
-Phase 5  - Ingestion Pipeline      DONE
+Phase 5  - Document Ingestion MCP  DONE
 Phase 6  - Retrieval MCP           DONE
 Phase 7  - Gemini RAG              DONE
-Phase 8  - Document Ingestion MCP  DONE
-Phase 9  - Hybrid Retrieval        PENDING
-Phase 10 - Reranking               PENDING
-Phase 11 - OCR MCP                 PENDING
-Phase 12 - Table Extraction MCP    PENDING
-Phase 13 - Layout Analysis MCP     PENDING
+Phase 8  - Document Filtering      DONE
+Phase 9  - Duplicate Protection    DONE
+Phase 10 - Hybrid Retrieval        PENDING
+Phase 11 - Reranking               PENDING
+Phase 12 - OCR MCP                 PENDING
+Phase 13 - Table Extraction MCP    PENDING
+Phase 14 - Layout Analysis MCP     PENDING
 ```
 
 ---
@@ -198,15 +305,18 @@ uv run python tests/test_rag.py
 
 ---
 
-## Future Enhancements
+## Version Milestone
 
-Not yet implemented:
+```text
+Current Version
+===============
+RAG V1.0 ✅
 
-* OCR MCP
-* Table Extraction MCP
-* Layout Analysis MCP
-* Hybrid Retrieval
-* Reranking
+Next Version
+============
+Hybrid Retrieval V1
+(Dense + BM25)
+```
 
 ---
 
