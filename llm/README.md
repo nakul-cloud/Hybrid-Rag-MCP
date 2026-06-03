@@ -1,28 +1,28 @@
-# LLM Module (V1)
+# Gemini Integration Layer (V1)
 
-## Purpose
+## Overview
 
-Gemini integration layer for RAG responses.
+The LLM module wraps Gemini to provide consistent text generation for RAG workflows.
 
 ---
 
-# Files
+## Files
 
 * gemini_client.py
 
 ---
 
-# Features
+## Features
 
-* API key management
-* Gemini SDK wrapper
 * Text generation
 * System prompt support
+* RAG support
+* Environment-variable configuration
 * Future multimodal support
 
 ---
 
-# Future Roadmap
+## Future Roadmap
 
 * Gemini Vision
 * Image understanding

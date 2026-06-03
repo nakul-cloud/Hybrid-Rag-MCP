@@ -1,13 +1,13 @@
-# Retrieval MCP (V2)
+# Retrieval MCP (V3)
 
 ## Overview
 
-Retrieval MCP exposes semantic search over stored document chunks.
+Retrieval MCP exposes semantic search and Gemini-powered RAG over stored document chunks, plus document ingestion via MCP tooling.
 
 Version:
 
 ```text
-V2
+V3
 ```
 
 Status:
@@ -23,26 +23,29 @@ Completed
 * Accept a user query
 * Search the vector store
 * Return ranked chunks with metadata
-* Support downstream MCP servers
+* Run Gemini-powered question answering
+* Ingest new documents into Qdrant
 
 ---
 
 # Architecture
 
-```text
-Question
-  |
-  v
-Qdrant Retrieval
-  |
-  v
-Top K Chunks
-  |
-  v
-Gemini
-  |
-  v
-Answer
+## Query Flow
+
+```mermaid
+flowchart TB
+    Q[Question] --> R[Qdrant]
+    R --> T[Top Chunks]
+    T --> G[Gemini]
+    G --> A[Answer]
+```
+
+## Ingestion Flow
+
+```mermaid
+flowchart TB
+    D[New PDF] --> I[ingest_document]
+    I --> Q[Qdrant]
 ```
 
 ---
@@ -58,12 +61,23 @@ Responsibilities:
 
 ---
 
+## rag_engine.py
+
+Responsibilities:
+
+* Build context from top K chunks
+* Generate grounded answers via Gemini
+* Return citations with source metadata
+
+---
+
 ## tools.py
 
 Responsibilities:
 
 * Provide MCP tool wrappers
 * Validate and format responses
+* Connect to ingestion service
 
 ---
 
@@ -173,6 +187,35 @@ Output:
 
 ---
 
+## ingest_document
+
+Ingests a new document into Qdrant via the ingestion pipeline.
+
+Input:
+
+```json
+{
+  "file_path": "data/samples/sample.pdf"
+}
+```
+
+Output:
+
+```json
+{
+  "status": "success",
+  "document_name": "sample.pdf",
+  "file_type": ".pdf",
+  "details": {
+    "pages": 19,
+    "chunks": 40,
+    "vectors": 40
+  }
+}
+```
+
+---
+
 # Schemas
 
 ## RetrievalRequest
@@ -220,17 +263,16 @@ Output:
 
 # Verification
 
-✅ MCP Inspector
-✅ Semantic Search
-✅ Gemini Integration
-✅ Source Attribution
+* MCP Inspector
+* Semantic Search
+* Gemini Integration
+* Source Attribution
+* Document Ingestion
 
 ---
 
 # Future Roadmap
 
-## V3
-
-* Multimodal retrieval
+* Hybrid retrieval (dense + sparse)
 * Reranking
-* Hybrid search (dense + sparse)
+* Multimodal retrieval

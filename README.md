@@ -31,6 +31,38 @@ This project builds a document intelligence pipeline that preserves structure, r
 
 ---
 
+## Current Status
+
+```
+PDF Parser MCP            DONE
+Hybrid Chunking           DONE
+Hybrid Embeddings         DONE
+Qdrant Vector Store       DONE
+Ingestion Pipeline        DONE
+Retrieval Engine          DONE
+Gemini RAG                DONE
+Document Ingestion MCP    DONE
+MCP Inspector Testing     DONE
+```
+
+---
+
+## Architecture Diagram
+
+```mermaid
+flowchart TB
+    D[Document] --> P[PDF Parser MCP]
+    P --> C[Hybrid Chunking]
+    C --> E[Hybrid Embeddings]
+    E --> Q[Qdrant]
+
+    U[User Query] --> R[Retrieval MCP]
+    R --> G[Gemini RAG]
+    G --> A[Answer]
+```
+
+---
+
 ## Project Status
 
 Completed Modules:
@@ -43,6 +75,8 @@ Completed Modules:
 * Retrieval Engine
 * Retrieval MCP
 * Gemini-Powered RAG
+* Document Ingestion MCP
+* MCP Inspector Testing
 
 ---
 
@@ -77,12 +111,13 @@ flowchart TB
 
 * Extracts metadata, page text, and document text.
 
-### Retrieval MCP
+### Retrieval MCP (V3)
 
 * `semantic_search`
 * `get_collection_stats`
 * `list_documents`
 * `ask_documents`
+* `ingest_document`
 
 ### Planned MCP Servers
 
@@ -96,19 +131,19 @@ flowchart TB
 ## Roadmap
 
 ```text
-Phase 1  - PDF Parser MCP         DONE
-Phase 2  - Hybrid Chunking        DONE
-Phase 3  - Hybrid Embeddings      DONE
-Phase 4  - Qdrant Integration     DONE
-Phase 5  - Ingestion Pipeline     DONE
-Phase 6  - Retrieval MCP          DONE
-Phase 7  - Gemini RAG             DONE
-Phase 8  - Document Ingestion MCP NEXT
-Phase 9  - OCR MCP                NEXT
-Phase 10 - Table Extraction MCP   NEXT
-Phase 11 - Layout Analysis MCP    NEXT
-Phase 12 - Hybrid Retrieval       NEXT
-Phase 13 - Reranking              NEXT
+Phase 1  - PDF Parser MCP          DONE
+Phase 2  - Hybrid Chunking         DONE
+Phase 3  - Hybrid Embeddings       DONE
+Phase 4  - Qdrant Integration      DONE
+Phase 5  - Ingestion Pipeline      DONE
+Phase 6  - Retrieval MCP           DONE
+Phase 7  - Gemini RAG              DONE
+Phase 8  - Document Ingestion MCP  DONE
+Phase 9  - Hybrid Retrieval        PENDING
+Phase 10 - Reranking               PENDING
+Phase 11 - OCR MCP                 PENDING
+Phase 12 - Table Extraction MCP    PENDING
+Phase 13 - Layout Analysis MCP     PENDING
 ```
 
 ---
@@ -167,7 +202,6 @@ uv run python tests/test_rag.py
 
 Not yet implemented:
 
-* Document Ingestion MCP
 * OCR MCP
 * Table Extraction MCP
 * Layout Analysis MCP

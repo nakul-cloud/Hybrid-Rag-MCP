@@ -1,8 +1,272 @@
-# Document Ingestion Pipeline
+# Document Ingestion Pipeline (V1.5)
 
-## V1 (Archived)
+## Overview
 
-### Overview
+The ingestion pipeline transforms raw documents into retrieval-ready chunks, stores them in Qdrant, and exposes ingestion via both direct pipeline execution and MCP tooling.
+
+Supported ingestion paths:
+
+- Pipeline ingestion (direct `run_ingestion_pipeline()`)
+- MCP ingestion (via `DocumentIngestionService` and `ingest_document` tool)
+
+Version:
+
+```text
+V1.5
+```
+
+Status:
+
+```text
+Completed
+```
+
+---
+
+## Pipeline Flow
+
+### Ingestion Pipeline
+
+```mermaid
+flowchart TB
+    A[PDF] --> B[PDF Parser MCP]
+    B --> C[Metadata Filtering]
+    C --> D[Hybrid Chunking]
+    D --> E[Embeddings]
+    E --> F[Qdrant]
+```
+
+### MCP Ingestion Path
+
+```mermaid
+flowchart TB
+    A[New Document] --> B[ingest_document Tool]
+    B --> C[DocumentIngestionService]
+    C --> D[run_ingestion_pipeline]
+    D --> E[Qdrant]
+```
+
+---
+
+## Hybrid Chunking
+
+Hybrid chunking combines recursive splitting, overlap, and sliding window context generation to preserve continuity and improve retrieval quality.
+
+### Implemented Chunking Strategies
+
+#### 1. Recursive Chunking
+
+The splitter attempts to break text using progressively smaller separators:
+
+```text
+Paragraphs
+    |
+    v
+Lines
+    |
+    v
+Sentences
+    |
+    v
+Words
+```
+
+Configuration:
+
+```python
+chunk_size = 1000
+chunk_overlap = 200
+```
+
+---
+
+#### 2. Overlapping Chunks
+
+To prevent information loss at chunk boundaries, overlapping content is included between consecutive chunks.
+
+Example:
+
+```text
+Chunk A
+--------------------
+Revenue increased...
+Market growth...
+
+Chunk B
+--------------------
+Market growth...
+Risk factors...
+```
+
+Benefits:
+
+* Preserves context
+* Reduces retrieval fragmentation
+* Improves answer grounding
+
+---
+
+#### 3. Sliding Window Context
+
+Sliding window chunking creates contextual chunks by combining neighboring chunks.
+
+Example:
+
+```text
+Chunk A
+Chunk B
+Chunk C
+```
+
+Generated Context Window:
+
+```text
+A + B + C
+```
+
+Benefits:
+
+* Provides broader context
+* Improves retrieval for multi-section questions
+* Preserves cross-section relationships
+
+---
+
+### Output Structure
+
+The chunking pipeline produces two outputs:
+
+#### Base Chunks
+
+Used for:
+
+* Precise retrieval
+* Embedding generation
+* Vector storage
+
+Example:
+
+```python
+{
+        "base_chunks": [...]
+}
+```
+
+---
+
+#### Context Chunks
+
+Used for:
+
+* Context enrichment
+* Broader retrieval context
+* Future hybrid retrieval workflows
+
+Example:
+
+```python
+{
+        "context_chunks": [...]
+}
+```
+
+---
+
+## Metadata Filtering
+
+Purpose:
+
+Remove noisy chunks before embedding.
+
+Current Rules:
+
+* TABLE OF CONTENTS
+* Page No
+* Sr No
+* Very short chunks
+
+Benefits:
+
+* Better retrieval quality
+* Reduced vector count
+* Cleaner search results
+
+---
+
+## Document Ingestion Service
+
+`ingestion_service.py` validates incoming files, triggers the pipeline, and returns a structured response.
+
+Responsibilities:
+
+* Validate file existence
+* Validate file extensions (`.pdf`, `.txt`, `.md`)
+* Trigger `run_ingestion_pipeline()`
+* Return ingestion metadata
+
+Response structure:
+
+```json
+{
+  "status": "success",
+  "document_name": "sample.pdf",
+  "file_type": ".pdf",
+  "details": {
+    "pages": 19,
+    "chunks": 40,
+    "vectors": 40
+  }
+}
+```
+
+Note: the current pipeline uses the PDF parser for extraction and is optimized for PDFs.
+
+---
+
+## Verification Results
+
+```text
+PDF Processed: sample.pdf
+
+Pages Extracted: 19
+
+Chunks Created: 40
+
+Vectors Stored: 40
+```
+
+---
+
+## Metadata Example
+
+```json
+{
+        "document_name": "sample.pdf",
+        "page": 1,
+        "chunk_id": "chunk_0001",
+        "chunk_type": "base",
+        "content_type": "text"
+}
+```
+
+---
+
+## Future Enhancements
+
+Not yet implemented:
+
+* Semantic chunking
+* Layout-aware chunking
+* OCR-aware chunking
+* Table-aware chunking
+* Section-aware chunking
+* Metadata enrichment
+
+---
+
+# V1 (Archived)
+
+## Overview
 
 The Hybrid Chunking Pipeline is responsible for transforming raw document text into retrieval-ready chunks that can later be embedded and stored in a vector database.
 
@@ -26,7 +290,7 @@ Completed
 
 ---
 
-### Objectives
+## Objectives
 
 The objectives of the Hybrid Chunking Pipeline are:
 
@@ -39,7 +303,7 @@ The objectives of the Hybrid Chunking Pipeline are:
 
 ---
 
-### Architecture
+## Architecture
 
 ```text
 Raw Document Text
@@ -59,7 +323,7 @@ Final Retrieval Chunks
 
 ---
 
-### Implemented Chunking Strategies
+## Implemented Chunking Strategies
 
 #### 1. Recursive Chunking
 
@@ -143,7 +407,7 @@ Benefits:
 
 ---
 
-### Current Configuration
+## Current Configuration
 
 #### Chunk Size
 
@@ -175,7 +439,7 @@ Represents the number of neighboring chunks included in the contextual window.
 
 ---
 
-### Output Structure
+## Output Structure
 
 The chunking pipeline produces two outputs:
 
@@ -215,19 +479,20 @@ Example:
 
 ---
 
-### Project Structure
+## Project Structure
 
 ```text
 ingestion/
 
 ├── chunker.py
+├── ingestion_service.py
 ├── pipeline.py
-└── README.md
+└── readme.md
 ```
 
 ---
 
-### Verification
+## Verification
 
 #### Test Script
 
@@ -245,7 +510,7 @@ uv run python tests/test_chunking.py
 
 ---
 
-### Verification Results
+## Verification Results
 
 #### Recursive Chunk Generation
 
@@ -295,7 +560,7 @@ Chunk overlap preserved contextual continuity between neighboring chunks.
 
 ---
 
-### Sample Output
+## Sample Output
 
 ```text
 Base Chunks: 20
@@ -310,7 +575,7 @@ Example output successfully demonstrated:
 
 ---
 
-### Current Limitations
+## Current Limitations
 
 The current implementation does not yet support:
 
@@ -321,11 +586,9 @@ The current implementation does not yet support:
 * Section-aware chunking
 * Metadata enrichment
 
-These capabilities will be added in future versions.
-
 ---
 
-### Future Versions
+## Future Versions
 
 #### V2
 
@@ -348,7 +611,7 @@ Planned enhancements:
 
 ---
 
-### Deliverables Completed
+## Deliverables Completed
 
 Completed:
 
@@ -361,7 +624,7 @@ Completed:
 
 ---
 
-### Status
+## Status
 
 ```text
 Version: V1
@@ -371,7 +634,7 @@ Verification: Passed
 
 ---
 
-### Next Component
+## Next Component
 
 Embedding Generation Pipeline
 
@@ -381,95 +644,3 @@ Objectives:
 * Generate embeddings using local embedding models
 * Prepare vectors for Qdrant storage
 * Enable semantic retrieval
-
----
-
-## V1.5 (Current)
-
-### Overview
-
-V1.5 adds page-level metadata, stable chunk identifiers, and standardized payloads for downstream MCP services while keeping the hybrid chunking strategy intact.
-
-Version:
-
-```text
-V1.5
-```
-
-Status:
-
-```text
-Completed
-```
-
----
-
-### Workflow
-
-```text
-PDF
-    |
-    v
-Parser
-    |
-    v
-Metadata Filtering
-    |
-    v
-Hybrid Chunking
-    |
-    v
-Embeddings
-    |
-    v
-Qdrant
-```
-
----
-
-### Verification
-
-```text
-PDF Processed: sample.pdf
-
-Pages Extracted: 19
-
-Chunks Created: 40
-
-Vectors Stored: 40
-```
-
----
-
-### Metadata
-
-```json
-{
-        "document_name": "sample.pdf",
-        "page": 1,
-        "chunk_id": "chunk_0001",
-        "chunk_type": "base",
-        "content_type": "text"
-}
-```
-
----
-
-### Metadata Filtering
-
-Purpose:
-
-Remove noisy chunks before embedding.
-
-Current Rules:
-
-* TABLE OF CONTENTS
-* Page No
-* Sr No
-* Very short chunks
-
-Benefits:
-
-* Better retrieval quality
-* Reduced vector count
-* Cleaner search results
