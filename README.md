@@ -51,6 +51,8 @@ This project builds a document intelligence pipeline that preserves structure, r
 
 ### Visual Flow
 
+#### Query Flow
+
 ```mermaid
 flowchart TB
     U[User Query] --> RM[Retrieval MCP]
@@ -59,6 +61,8 @@ flowchart TB
     RC --> GR[Gemini RAG]
     GR --> GA[Generated Answer]
 ```
+
+#### Ingestion Flow
 
 ```mermaid
 flowchart TB
