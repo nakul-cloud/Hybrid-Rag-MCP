@@ -1,10 +1,12 @@
+from typing import List, Optional
+
 from pydantic import BaseModel
-from typing import List
 
 
 class RetrievalRequest(BaseModel):
     query: str
     top_k: int = 5
+    document_name: Optional[str] = None
 
 
 class RetrievalResult(BaseModel):

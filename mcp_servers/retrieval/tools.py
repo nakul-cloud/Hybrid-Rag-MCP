@@ -32,14 +32,17 @@ def get_engine():
 
 def semantic_search_tool(
     query: str,
-    top_k: int = 5
+    top_k: int = 5,
+    document_name: str | None = None
 ):
 
     engine = get_engine()
 
     request = RetrievalRequest(
         query=query,
-        top_k=top_k
+        top_k=top_k,
+        document_name=
+        document_name
     )
 
     response = engine.semantic_search(
@@ -77,7 +80,8 @@ def get_rag_engine():
 
 def ask_documents_tool(
     query: str,
-    top_k: int = 5
+    top_k: int = 5,
+    document_name: str | None = None
 ):
 
     rag_engine = (
@@ -86,7 +90,9 @@ def ask_documents_tool(
 
     return rag_engine.ask_documents(
         query=query,
-        top_k=top_k
+        top_k=top_k,
+        document_name=
+        document_name
     )
 def get_ingestion_service():
 

@@ -26,12 +26,16 @@ class RAGEngine:
     def ask_documents(
         self,
         query: str,
-        top_k: int = 8
+        top_k: int = 8,
+        document_name: str | None = None
     ):
 
         request = RetrievalRequest(
             query=query,
-            top_k=top_k
+            top_k=top_k,
+
+            document_name=
+            document_name
         )
 
         retrieval_response = (

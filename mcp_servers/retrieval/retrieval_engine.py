@@ -4,6 +4,12 @@ from vector_store.qdrant_client import (
     QdrantConnection
 )
 
+from qdrant_client.models import (
+    Filter,
+    FieldCondition,
+    MatchValue
+)
+
 from mcp_servers.retrieval.schemas import (
     RetrievalRequest,
     RetrievalResult,
@@ -41,6 +47,21 @@ class RetrievalEngine:
 
         if hasattr(self.client, "query_points"):
 
+            search_filter = None
+
+            if request.document_name:
+
+                search_filter = Filter(
+                    must=[
+                        FieldCondition(
+                            key="document_name",
+                            match=MatchValue(
+                                value=request.document_name
+                            )
+                        )
+                    ]
+                )
+
             response = (
                 self.client.query_points(
                     collection_name=
@@ -51,6 +72,9 @@ class RetrievalEngine:
 
                     limit=
                     request.top_k,
+
+                    query_filter=
+                    search_filter,
 
                     with_payload=True
                 )

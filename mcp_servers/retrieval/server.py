@@ -32,12 +32,21 @@ mcp = FastMCP("Retrieval MCP")
 @mcp.tool()
 def semantic_search(
     query: str,
-    top_k: int = 5
+    top_k: int = 5,
+    document_name: str = ""
 ):
     """
     Search the vector store for relevant chunks.
     """
-    return semantic_search_tool(query, top_k)
+    return semantic_search_tool(
+
+        query=query,
+
+        top_k=top_k,
+
+        document_name=
+        document_name or None
+    )
 
 
 @mcp.tool()
@@ -59,7 +68,8 @@ def list_documents():
 @mcp.tool()
 def ask_documents(
     query: str,
-    top_k: int = 5
+    top_k: int = 5,
+    document_name: str = ""
 ):
     """
     Ask questions over ingested documents using Gemini RAG.
@@ -67,7 +77,10 @@ def ask_documents(
 
     return ask_documents_tool(
         query=query,
-        top_k=top_k
+        top_k=top_k,
+
+        document_name=
+        document_name or None
     )
 
 @mcp.tool()
