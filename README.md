@@ -1,305 +1,201 @@
 # Hybrid PDF + OCR Retrieval Pipeline with MCP
 
-## Overview
-
-Hybrid PDF + OCR Retrieval Pipeline with MCP is a modular Retrieval-Augmented Generation (RAG) system built for complex enterprise documents. It combines PDF parsing, hybrid chunking, embeddings, vector storage, and MCP orchestration to deliver grounded answers with citations.
+A modular, production-grade Retrieval-Augmented Generation (RAG) system built for complex enterprise documents. It orchestrates layout-aware PDF parsing, hybrid hierarchical chunking, dense/sparse retrieval, and Gemini-based answer generation using the Model Context Protocol (MCP).
 
 ---
 
 ## Current Status
 
-* Phase 1: PDF Parser MCP                    ✅
-* Phase 2: Chunking Pipeline                 ✅
-* Phase 3: Embedding Pipeline                ✅
-* Phase 4: Qdrant Integration                ✅
-* Phase 5: Document Ingestion MCP            ✅
-* Phase 6: Retrieval MCP                     ✅
-* Phase 7: Gemini RAG                        ✅
-* Phase 8: Document Filtering                ✅
-* Phase 9: Duplicate Protection              ✅
+* Phase 1: PDF Parser MCP                    ✅ (Completed)
+* Phase 2: Chunking Pipeline                 ✅ (Completed)
+* Phase 3: Embedding Pipeline                ✅ (Completed)
+* Phase 4: Qdrant Integration                ✅ (Completed)
+* Phase 5: Document Ingestion MCP            ✅ (Completed)
+* Phase 6: Retrieval MCP                     ✅ (Completed)
+* Phase 7: Gemini RAG                        ✅ (Completed)
+* Phase 8: Document Filtering                ✅ (Completed)
+* Phase 9: Duplicate Protection              ✅ (Completed)
+* Phase 10: Hybrid Retrieval (Dense + BM25)  ✅ (Completed)
+* Phase 11: Reranking                        🚧 (Planned)
+* Phase 12: OCR MCP                          🚧 (Planned)
+* Phase 13: Table Extraction MCP             🚧 (Planned)
+* Phase 14: Layout Analysis MCP              🚧 (Planned)
 
-Current Focus: Hybrid Retrieval (BM25 + Dense Search)
+Current Release Version: **RAG V1.0 (Hybrid Retrieval Enabled)**
 
 ---
 
 ## Problem Statement
 
-Traditional RAG pipelines work well on clean PDFs but fail on real-world documents with:
+Traditional RAG pipelines struggle with real-world enterprise documents, often failing due to:
+* **Multi-column layouts** resulting in out-of-order text extraction.
+* **Tables and charts** losing their spatial representation.
+* **Scanned/low-quality PDFs** requiring OCR integration.
+* **Structural Noise** (headers, footers, page numbers) polluting semantic embeddings.
+* **Keyword vs. Semantic Mismatches** where exact terms/acronyms are missed by dense models, or conceptual themes are missed by keyword-based matchers.
 
-* Multi-column layouts
-* Tables and charts
-* Scanned pages
-* Headers, footers, and footnotes
-* Mixed document structures
-
-This project builds a document intelligence pipeline that preserves structure, reduces noise, and improves retrieval quality.
-
----
-
-## Objectives
-
-* Build a layout-aware ingestion pipeline
-* Support digital and scanned PDFs
-* Preserve document hierarchy and metadata
-* Store embeddings in Qdrant
-* Provide MCP-based tool orchestration
-* Enable grounded question answering
+This pipeline preserves layout structure, filters out structural noise, supports metadata-scoped filtering, and implements hybrid retrieval with Reciprocal Rank Fusion (RRF) to retrieve the most contextually relevant chunks.
 
 ---
 
-## Architecture
+## System Architecture
 
-### Visual Flow
-
-#### Query Flow
+### Query & Retrieval Flow
+The retrieval server performs hybrid retrieval by executing semantic search and BM25 search in parallel, then fuses the results using Reciprocal Rank Fusion (RRF).
 
 ```mermaid
 flowchart TB
     U[User Query] --> RM[Retrieval MCP]
-    RM --> DR[Dense Retrieval]
-    RM --> BR[BM25 Retrieval]
-    DR --> RRF[RRF Fusion]
+    subgraph Parallel Retrieval
+        RM --> DR[Dense Semantic Search\nBAAI/bge-base-en-v1.5]
+        RM --> BR[Sparse Keyword Search\nrank-bm25 / Qdrant Scrolled Payloads]
+    end
+    DR --> RRF[RRF Fusion\nk = 60]
     BR --> RRF
-    RRF --> RC[Top Relevant Chunks]
-    RC --> GR[Gemini RAG]
-    GR --> GA[Generated Answer]
+    RRF --> RC[Top Relevant Chunks\nwith Section Metadata]
+    RC --> GR[Gemini RAG\ngemini-2.5-flash]
+    GR --> GA[Generated Grounded Answer\nwith Citations]
 ```
 
-#### Ingestion Flow
+### Document Ingestion Flow
+Documents go through layouts extraction, page-by-page hybrid chunking, embedding, and deterministic upserting.
 
 ```mermaid
 flowchart TB
-    DU[Document Upload] --> DIM[Document Ingestion MCP]
-    DIM --> PP[PDF Parser]
-    PP --> HC[Hybrid Chunking]
-    HC --> EG[Embedding Generation]
-    EG --> QV[Qdrant Vector Store]
-```
-
-### Text Flow
-
-```
-User Query
-    |
-    v
-Retrieval MCP
-    |
-    v
-Dense Retrieval (Embeddings + Qdrant)
-    +
-BM25 Keyword Retrieval
-    |
-    v
-Reciprocal Rank Fusion (RRF)
-    |
-    v
-Top Relevant Chunks
-    |
-    v
-Gemini RAG
-    |
-    v
-Generated Answer
-
-Document Upload
-    |
-    v
-Document Ingestion MCP
-    |
-    v
-PDF Parser
-    |
-    v
-Hybrid Chunking
-    |
-    v
-Embedding Generation
-    |
-    v
-Qdrant Vector Store
+    DU[PDF Upload] --> DIM[Document Ingestion MCP]
+    DIM --> VAL[Validation & Duplicate Check]
+    VAL --> PP[PDF Parser\nPyMuPDF]
+    PP --> HC[Hybrid Hierarchical Chunking\nRecursive + Sliding Context Window]
+    HC --> FLT[Noise Filter\nChunkFilter]
+    FLT --> EG[Embedding Generation\nHybridEmbedder]
+    EG --> QV[Qdrant Vector Store\nDeterministic MD5 Point IDs]
 ```
 
 ---
 
-## Features
+## Key Features & Capabilities
 
-### PDF Processing
-- PDF Parsing
-- Metadata Extraction
-- Page-Level Processing
+### 1. Advanced Ingestion & Layout-Aware Parsing
+* **Layout Parsing**: Extracts metadata, total pages, and text hierarchy.
+* **Hybrid Hierarchical Chunking**:
+  * Chunks text section-by-section using structural heading detection (`r"(\d+(?:\.\d+)?\s+.+)"`).
+  * Generates **base chunks** (RecursiveCharacterTextSplitter) alongside **context chunks** (sliding window merging adjacent chunks to preserve context).
+* **Noise Filtering**: Automatically discards headers, footers, "Table of Contents", and short blocks (< 50 chars).
 
-### Ingestion Pipeline
-- Dynamic PDF Upload
-- Automatic Chunking
-- Embedding Generation
-- Qdrant Storage
-- Section Metadata
+### 2. Dual-Engine Retrieval & Fusion
+* **Dense Semantic Retrieval**: Employs `BAAI/bge-base-en-v1.5` embeddings (768-dimensional, Cosine distance) to capture conceptual similarity.
+* **Sparse Keyword Retrieval**: Employs `BM25Okapi` over local text documents scrolled from Qdrant payloads to match exact acronyms and keywords.
+* **Reciprocal Rank Fusion (RRF)**: Merges dense and sparse rankings using reciprocal scoring ($Score = \sum \frac{1}{k + Rank}$) to ensure optimal ranking.
 
-### Retrieval
-- Semantic Search
-- BM25 Keyword Search
-- Metadata Filtering
-- Document-Level Search
-- Multi-Document Search
-- Section-Aware Results
-
-### RAG
-- Gemini-Powered Answers
-- Context-Aware Responses
-- Source-Based Retrieval
-
-### Reliability
-- Deterministic Qdrant IDs
-- Duplicate Chunk Prevention
-- Duplicate Document Prevention
+### 3. Reliability & Deduplication
+* **Content-Based Point IDs**: Point IDs are generated using an MD5 hash of `document_name + page + chunk_text`. This guarantees that duplicate chunks do not create redundant database entries.
+* **Ingestion Guard**: Skips processing if the document has already been indexed.
 
 ---
 
 ## Retrieval MCP Tools
 
-| Tool | Description |
-|--------|------------|
-| semantic_search | Search relevant chunks |
-| ask_documents | Gemini-powered RAG |
-| ingest_document | Ingest new PDFs |
-| list_documents | List indexed documents |
-| get_collection_stats | Collection statistics |
+The **Retrieval MCP** exposes the following endpoints for client orchestration:
+
+| Tool Name | Parameters | Description |
+|-----------|------------|-------------|
+| `semantic_search` | `query: str`, `top_k: int`, `document_name: str` | Perform semantic (dense) search in the Qdrant vector store. |
+| `bm25_search` | `query: str`, `top_k: int` | Perform BM25 keyword (sparse) search over the indexed documents. |
+| `hybrid_search` | `query: str`, `top_k: int`, `document_name: str` | Perform hybrid (dense + BM25) search with RRF fusion. |
+| `ask_documents` | `query: str`, `top_k: int`, `document_name: str` | RAG tool using Gemini to answer queries strictly based on fused retrieval contexts. |
+| `ingest_document` | `file_path: str` | Validate and ingest a local PDF/TXT/MD document into the Qdrant database. |
+| `list_documents` | None | Retrieve the list of all document names currently indexed in the vector store. |
+| `get_collection_stats`| None | Fetch statistics (points count, vector size, distance metric) of the Qdrant collection. |
 
 ---
 
-## Document Ingestion Workflow
+## Getting Started
 
-```text
-PDF
- ↓
-Document Validation
- ↓
-Duplicate Check
- ↓
-PDF Parsing
- ↓
-Chunking
- ↓
-Embedding Generation
- ↓
-Qdrant Upsert
-```
+### Prerequisites
+* Python >= 3.11
+* [uv](https://github.com/astral-sh/uv) (fast Python package installer and runner)
+* Qdrant (running locally on `localhost:6333` or Docker)
+* Google Gemini API Key
 
----
+### Configuration
+1. Clone this repository.
+2. Create a `.env` file in the root directory:
+   ```env
+   GEMINI_API_KEY="your_gemini_api_key_here"
+   ```
 
-## Duplicate Protection
+### Quick Setup
 
-The ingestion pipeline prevents duplicate documents and duplicate chunks using:
+1. **Install Dependencies**:
+   ```bash
+   uv sync
+   ```
 
-1. Content-Based Point IDs
-2. Document Existence Checks
+2. **Start Qdrant**:
+   Ensure Qdrant is running. If using Docker:
+   ```bash
+   docker run -p 6333:6333 -p 6334:6334 -v qdrant_storage:/qdrant/storage qdrant/qdrant
+   ```
 
-### Point ID Strategy
+3. **Initialize the Collection**:
+   Create the Qdrant `documents` collection with the correct vector dimensions (768):
+   ```bash
+   uv run python tests/test_create_collection.py
+   ```
 
-```text
-MD5(
-    document_name +
-    page +
-    chunk_text
-)
-```
-
-This guarantees identical chunks map to identical Qdrant point IDs.
-
----
-
-## Supported Workflows
-
-### Single Document QA
-
-```text
-User
- ↓
-Document Filter
- ↓
-Semantic Search
- ↓
-Gemini
-```
-
-### Multi Document QA
-
-```text
-User
- ↓
-Knowledge Base Search
- ↓
-Semantic Search
- ↓
-Gemini
-```
-
-### Dynamic Document Upload
-
-```text
-New PDF
- ↓
-ingest_document
- ↓
-Qdrant
- ↓
-Immediately Searchable
-```
+4. **Ingest Sample Documents**:
+   Ingest a test PDF file to populate the index:
+   ```bash
+   uv run python tests/test_pipeline.py
+   ```
 
 ---
 
-## MCP Servers
+## Running the MCP Servers
 
-### PDF Parser MCP
+You can start the MCP servers locally using `uv`:
 
-* Extracts metadata, page text, and document text.
-
-### Retrieval MCP (V3)
-
-* `semantic_search`
-* `get_collection_stats`
-* `list_documents`
-* `ask_documents`
-* `ingest_document`
-
-### Planned MCP Servers
-
-* OCR MCP
-* Table Extraction MCP
-* Layout Analysis MCP
-* Vector Store MCP
-
----
-
-## Roadmap
-
-```text
-Phase 1  - PDF Parser MCP          DONE
-Phase 2  - Hybrid Chunking         DONE
-Phase 3  - Hybrid Embeddings       DONE
-Phase 4  - Qdrant Integration      DONE
-Phase 5  - Document Ingestion MCP  DONE
-Phase 6  - Retrieval MCP           DONE
-Phase 7  - Gemini RAG              DONE
-Phase 8  - Document Filtering      DONE
-Phase 9  - Duplicate Protection    DONE
-Phase 10 - Hybrid Retrieval        DONE
-Phase 11 - Reranking               PENDING
-Phase 12 - OCR MCP                 PENDING
-Phase 13 - Table Extraction MCP    PENDING
-Phase 14 - Layout Analysis MCP     PENDING
+### PDF Parser MCP Server
+```bash
+uv run python -m mcp_servers.pdf_parser.server
 ```
 
+### Retrieval MCP Server
+```bash
+uv run python -m mcp_servers.retrieval.server
+```
+
+*(You can register these servers in your cursor/VS Code settings or MCP host configuration using the absolute path to `uv` and the script module arguments.)*
+
 ---
 
-## Key Capabilities
+## Verification & Testing Suite
 
-* Hybrid chunking with context windows
-* Metadata filtering for noisy chunks
-* Sentence-transformer embeddings
-* Qdrant vector search
-* Gemini-powered grounded answers
-* MCP orchestration for modular services
+We provide a comprehensive list of tests under the `tests/` directory to verify every component of the RAG pipeline:
+
+```bash
+# Verify basic connection & setup
+uv run python tests/test_qdrant_connection.py  # Check connection to Qdrant
+uv run python tests/test_gemini.py             # Check Gemini connection & credentials
+
+# Verify embedding & chunking mechanics
+uv run python tests/test_chunking.py           # Test recursive + sliding context chunking
+uv run python tests/test_embeddings.py         # Test BGE-embedding generation
+
+# Verify ingestion and stats
+uv run python tests/test_pipeline.py           # Ingest a PDF through layout parser, chunker, & embedder
+uv run python tests/test_document_counts.py    # Group and count points by document
+uv run python tests/test_scroll_points.py      # Scroll and preview ingested payloads
+
+# Verify search algorithms
+uv run python tests/test_retrieval.py          # Test Dense semantic search
+uv run python tests/test_bm25.py               # Test Sparse keyword BM25 search
+uv run python tests/test_hybrid_retrieval.py   # Compare Dense, BM25, and Hybrid results
+uv run python tests/test_document_filter.py    # Semantic search with metadata filtering
+
+# Verify end-to-end QA
+uv run python tests/test_rag.py                # Test grounded Gemini answer generation
+```
 
 ---
 
@@ -307,60 +203,60 @@ Phase 14 - Layout Analysis MCP     PENDING
 
 ```text
 hybrid-rag-mcp/
-
-├── agent/
-├── app/
-├── embeddings/
-├── ingestion/
-├── llm/
-├── mcp_servers/
-│   ├── pdf_parser/
-│   ├── retrieval/
-│   ├── ocr/
-│   ├── table_extractor/
-│   ├── layout_analyzer/
-│   └── vector_store/
-├── vector_store/
-├── data/
-├── tests/
-└── main.py
-```
-
----
-
-## Verification
-
-Quick checks:
-
-```bash
-uv run python tests/test_chunking.py
-uv run python tests/test_embeddings.py
-uv run python tests/test_pipeline.py
-uv run python tests/test_retrieval.py
-uv run python tests/test_rag.py
-```
-
----
-
-## Version Milestone
-
-```text
-Current Version
-===============
-RAG V1.0 ✅
-
-============
-Hybrid Retrieval V1
-(Dense + BM25)  ✅
+├── agent/                  # Future agentic logic (graph-based routing)
+│   └── graph.py
+├── app/                    # Configuration settings
+│   ├── config.py
+│   └── settings.py
+├── data/                   # Directory to hold local files (e.g. data/samples/sample.pdf)
+├── docs/                   # Upgrade logs and design documents
+│   └── HYBRID_RAG_UPGRADE.md
+├── embeddings/             # Text embedding utilities (Sentence Transformers)
+│   └── embedder.py
+├── ingestion/              # PDF extraction, chunking, filtering, and pipeline coordination
+│   ├── chunker.py
+│   ├── filters.py
+│   ├── ingestion_service.py
+│   └── pipeline.py
+├── llm/                    # Gemini API interface client
+│   └── gemini_client.py
+├── mcp_servers/            # Model Context Protocol servers
+│   ├── pdf_parser/         # PyMuPDF-based text parser & metadata extractor
+│   │   ├── pdf_utils.py
+│   │   ├── schemas.py
+│   │   ├── tools.py
+│   │   └── server.py
+│   ├── retrieval/          # Retrieval server (semantic, bm25, hybrid, RAG, ingestion)
+│   │   ├── bm25_qdrant_retriever.py
+│   │   ├── bm25_retriever.py
+│   │   ├── hybrid_retriever.py
+│   │   ├── rag_engine.py
+│   │   ├── retrieval_engine.py
+│   │   ├── schemas.py
+│   │   ├── tools.py
+│   │   └── server.py
+│   ├── ocr/                # Placeholder for scanned pages OCR (planned)
+│   ├── table_extractor/    # Placeholder for table structures extractor (planned)
+│   ├── layout_analyzer/    # Placeholder for layout extraction server (planned)
+│   └── vector_store/       # Placeholder for standalone vector store controls (planned)
+├── vector_store/           # Qdrant client connections, ingestion, & schema creations
+│   ├── collections.py
+│   ├── ingest.py
+│   └── qdrant_client.py
+├── tests/                  # Integration and verification test scripts
+├── pyproject.toml          # PEP 621 configuration file & dependencies list
+└── uv.lock                 # Lockfile for precise dependency resolution
 ```
 
 ---
 
 ## Technology Stack
 
-* Python
-* MCP (FastMCP)
-* Qdrant
-* PyMuPDF
-* Sentence Transformers
-* Gemini SDK
+* **Language**: Python >= 3.11
+* **Orchestration**: Model Context Protocol (FastMCP)
+* **Vector Database**: Qdrant (using Cosine distance, scrolling, payloads)
+* **Embedding Model**: `BAAI/bge-base-en-v1.5` via Sentence Transformers
+* **Sparse Index**: `BM25Okapi` via `rank-bm25`
+* **RAG LLM**: Google Gemini SDK (`gemini-2.5-flash`)
+* **Parsing**: PyMuPDF (`fitz`)
+* **Environment**: `uv` package manager, `python-dotenv`
