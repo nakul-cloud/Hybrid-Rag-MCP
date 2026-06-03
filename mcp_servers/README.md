@@ -9,8 +9,9 @@ This folder contains the MCP servers that make up the document intelligence pipe
   * Responsibilities: PDF parsing, metadata extraction, page text extraction
 
 * retrieval
-  * Status: Completed (V1)
-  * Responsibilities: Semantic search, collection stats, document listing
+  * Status: Completed (V3)
+  * Responsibilities: Semantic search, collection stats, document listing, Gemini RAG, document ingestion
+  * Tools: semantic_search, get_collection_stats, list_documents, ask_documents, ingest_document
 
 * ocr
   * Status: Planned (V1)
