@@ -8,18 +8,17 @@ Hybrid PDF + OCR Retrieval Pipeline with MCP is a modular Retrieval-Augmented Ge
 
 ## Current Status
 
-Phase 1: PDF Parser MCP                    ✅
-Phase 2: Chunking Pipeline                 ✅
-Phase 3: Embedding Pipeline                ✅
-Phase 4: Qdrant Integration                ✅
-Phase 5: Document Ingestion MCP            ✅
-Phase 6: Retrieval MCP                     ✅
-Phase 7: Gemini RAG                        ✅
-Phase 8: Document Filtering                ✅
-Phase 9: Duplicate Protection              ✅
+* Phase 1: PDF Parser MCP                    ✅
+* Phase 2: Chunking Pipeline                 ✅
+* Phase 3: Embedding Pipeline                ✅
+* Phase 4: Qdrant Integration                ✅
+* Phase 5: Document Ingestion MCP            ✅
+* Phase 6: Retrieval MCP                     ✅
+* Phase 7: Gemini RAG                        ✅
+* Phase 8: Document Filtering                ✅
+* Phase 9: Duplicate Protection              ✅
 
-Current Focus:
-Hybrid Retrieval (BM25 + Dense Search)
+Current Focus: Hybrid Retrieval (BM25 + Dense Search)
 
 ---
 
@@ -54,20 +53,26 @@ This project builds a document intelligence pipeline that preserves structure, r
 
 ```mermaid
 flowchart TB
-    subgraph Query
-        U[User Query] --> RM[Retrieval MCP]
-        RM --> SS[Semantic Search]
-        SS --> RC[Relevant Chunks]
-        RC --> GR[Gemini RAG]
-        GR --> GA[Generated Answer]
+    subgraph Query Flow
+        U[User Query]
+        RM[Retrieval MCP]
+        SS[Semantic Search]
+        RC[Relevant Chunks]
+        GR[Gemini RAG]
+        GA[Generated Answer]
+
+        U --> RM --> SS --> RC --> GR --> GA
     end
 
-    subgraph Ingestion
-        DU[Document Upload] --> DIM[Document Ingestion MCP]
-        DIM --> PP[PDF Parser]
-        PP --> HC[Hybrid Chunking]
-        HC --> EG[Embedding Generation]
-        EG --> QV[Qdrant Vector Store]
+    subgraph Ingestion Flow
+        DU[Document Upload]
+        DIM[Document Ingestion MCP]
+        PP[PDF Parser]
+        HC[Hybrid Chunking]
+        EG[Embedding Generation]
+        QV[Qdrant Vector Store]
+
+        DU --> DIM --> PP --> HC --> EG --> QV
     end
 ```
 
