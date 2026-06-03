@@ -70,6 +70,9 @@ class QdrantIngestor:
                     "page":
                     record["page"],
 
+                    "section":
+                    record["section"],
+
                     "chunk_id":
                     record["chunk_id"],
 
